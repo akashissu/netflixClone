@@ -1,102 +1,82 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState } from 'react';
+import { Search, X } from 'lucide-react';
+import { allMovies, tvShows } from '@/lib/data';
 import MovieCard from '@/components/MovieCard';
-import LoadingSkeleton from '@/components/LoadingSkeleton';
-import SearchBar from '@/components/SearchBar';
-import { searchTitles } from '@/lib/tmdb';
 import { Movie } from '@/types';
-import { FiSearch } from 'react-icons/fi';
 
 export default function SearchPage() {
   const [query, setQuery] = useState('');
-  const [results, setResults] = useState<Movie[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [hasSearched, setHasSearched] = useState(false);
 
-  const performSearch = useCallback(async (searchQuery: string) => {
-    if (!searchQuery.trim()) {
-      setResults([]);
-      setHasSearched(false);
-      setLoading(false);
-      return;
-    }
+  const allContent: Movie[] = [...allMovies, ...tvShows];
 
-    setLoading(true);
-    setHasSearched(true);
+  const results = query.length > 1
+    ? allContent.filter(
+        (item) =>
+          item.title.toLowerCase().includes(query.toLowerCase()) ||
+          item.genre.some((g) => g.toLowerCase().includes(query.toLowerCase())) ||
+          item.description.toLowerCase().includes(query.toLowerCase())
+      )
+    : [];
 
-    try {
-      const data = await searchTitles(searchQuery);
-      setResults(data);
-    } catch (error) {
-      console.error('Search error:', error);
-      setResults([]);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      performSearch(query);
-    }, 400);
-
-    return () => clearTimeout(timer);
-  }, [query, performSearch]);
+  const trending = allContent.slice(0, 12);
 
   return (
-    <div className="min-h-screen bg-netflix-black pt-24 px-4 md:px-8 lg:px-16">
-      <div className="max-w-7xl mx-auto">
-        <h1 className="text-2xl md:text-3xl font-bold text-white mb-6">Search</h1>
-        
-        <SearchBar
-          value={query}
-          onChange={setQuery}
-          placeholder="Search for movies, TV shows, genres..."
-        />
-
-        <div className="mt-8">
-          {loading && (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
-              {Array.from({ length: 12 }).map((_, i) => (
-                <LoadingSkeleton key={i} />
-              ))}
-            </div>
-          )}
-
-          {!loading && hasSearched && results.length === 0 && (
-            <div className="flex flex-col items-center justify-center py-24 text-center">
-              <FiSearch className="text-netflix-gray mb-4" size={64} />
-              <h2 className="text-xl font-semibold text-white mb-2">No results found</h2>
-              <p className="text-netflix-lightgray">
-                We couldn&apos;t find anything matching &quot;{query}&quot;. Try a different search term.
-              </p>
-            </div>
-          )}
-
-          {!loading && !hasSearched && (
-            <div className="flex flex-col items-center justify-center py-24 text-center">
-              <FiSearch className="text-netflix-gray mb-4" size={64} />
-              <h2 className="text-xl font-semibold text-white mb-2">Search for something</h2>
-              <p className="text-netflix-lightgray">
-                Find your favorite movies, TV shows, and more.
-              </p>
-            </div>
-          )}
-
-          {!loading && results.length > 0 && (
-            <>
-              <p className="text-netflix-lightgray mb-4 text-sm">
-                {results.length} result{results.length !== 1 ? 's' : ''} for &quot;{query}&quot;
-              </p>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
-                {results.map((item) => (
-                  <MovieCard key={`${item.id}-${item.media_type}`} item={item} />
-                ))}
-              </div>
-            </>
+    <div className="min-h-screen bg-netflix-black pt-24 pb-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Search Input */}
+        <div className="relative mb-10">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search movies, shows, genres..."
+            className="w-full bg-zinc-800 text-white placeholder-gray-500 pl-12 pr-12 py-4 rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-netflix-red border border-zinc-700 focus:border-transparent"
+            autoFocus
+          />
+          {query && (
+            <button
+              onClick={() => setQuery('')}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
+            >
+              <X className="w-5 h-5" />
+            </button>
           )}
         </div>
+
+        {/* Results */}
+        {query.length > 1 ? (
+          <>
+            <h2 className="text-xl font-semibold text-white mb-6">
+              {results.length > 0
+                ? `${results.length} result${results.length !== 1 ? 's' : ''} for "${query}"`
+                : `No results for "${query}"`}
+            </h2>
+            {results.length > 0 ? (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                {results.map((item) => (
+                  <MovieCard key={item.id} movie={item} />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-20">
+                <Search className="w-16 h-16 text-gray-700 mx-auto mb-4" />
+                <p className="text-gray-500 text-lg">Try searching for a movie, show, or genre</p>
+              </div>
+            )}
+          </>
+        ) : (
+          <>
+            <h2 className="text-xl font-semibold text-white mb-6">Trending Searches</h2>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+              {trending.map((item) => (
+                <MovieCard key={item.id} movie={item} />
+              ))}
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
