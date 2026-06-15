@@ -1,52 +1,25 @@
-import { type ClassValue } from 'clsx';
+import { type ClassValue, clsx } from 'clsx';
+import { twMerge } from 'tailwind-merge';
 
 export function cn(...inputs: ClassValue[]): string {
-  return inputs
-    .flat()
-    .filter(Boolean)
-    .join(' ');
+  return twMerge(clsx(inputs));
 }
 
-export function formatRuntime(minutes: number): string {
-  const hours = Math.floor(minutes / 60);
-  const mins = minutes % 60;
-  if (hours === 0) return `${mins}m`;
-  if (mins === 0) return `${hours}h`;
-  return `${hours}h ${mins}m`;
-}
-
-export function formatDate(dateString: string): string {
-  if (!dateString) return '';
-  const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
-}
-
-export function getYear(dateString: string | undefined): number | null {
-  if (!dateString) return null;
-  const year = new Date(dateString).getFullYear();
-  return isNaN(year) ? null : year;
+export function formatDuration(minutes: number): string {
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+  if (h === 0) return `${m}m`;
+  if (m === 0) return `${h}h`;
+  return `${h}h ${m}m`;
 }
 
 export function truncateText(text: string, maxLength: number): string {
   if (text.length <= maxLength) return text;
-  return text.slice(0, maxLength).trim() + '...';
+  return text.slice(0, maxLength).trimEnd() + '...';
 }
 
-export function getMatchPercentage(voteAverage: number): number {
-  return Math.round(voteAverage * 10);
-}
-
-export function debounce<T extends (...args: unknown[]) => unknown>(
-  func: T,
-  wait: number
-): (...args: Parameters<T>) => void {
-  let timeout: NodeJS.Timeout | null = null;
-  return function (...args: Parameters<T>) {
-    if (timeout) clearTimeout(timeout);
-    timeout = setTimeout(() => func(...args), wait);
-  };
+export function getMatchColor(percent: number): string {
+  if (percent >= 85) return 'text-green-400';
+  if (percent >= 70) return 'text-yellow-400';
+  return 'text-orange-400';
 }
