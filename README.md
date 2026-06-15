@@ -1,19 +1,13 @@
-# netflixClone
+# Netflix Clone
 
-## Zero-Human Multi-Agent Platform
+A Netflix-style streaming UI built with Next.js 14 App Router, TypeScript, and Tailwind CSS.
 
-This repository is managed by the Zero-Human multi-agent platform.
+## Features
 
-### Getting Started
-
-1. Configure your agents in the platform dashboard
-2. Create issues or feature requests
-3. Agents will automatically work on tasks
-
-### Documentation
-
-- See `docs/` for project documentation
-- See `.paperclip/` for platform configuration
-- See `memory-bank/` for agent memory and context
-
-For more information, visit the Zero-Human platform documentation.
+- 🎬 Hero banner with featured title
+- 📺 Horizontally scrollable category rows
+- 🔍 Real-time search with debouncing
+- 🎥 YouTube trailer playback in detail modal
+- 📋 Personal "My List" with localStorage persistence
+- 📱 Fully responsive design
+- 🌙 Dark Netflix-style theme
