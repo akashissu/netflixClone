@@ -1,53 +1,40 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { Search, Bell, User } from './icons';
+import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 
 const NAV_LINKS = [
-  { href: '/', label: 'Home' },
+  { href: '/browse', label: 'Home' },
   { href: '/tv-shows', label: 'TV Shows' },
   { href: '/movies', label: 'Movies' },
-  { href: '/my-list', label: 'My List' },
+  { href: '/my-list', label: 'My List' }
 ];
 
-export default function Header() {
+export function Header() {
   const [scrolled, setScrolled] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
-  const [searchValue, setSearchValue] = useState('');
-  const pathname = usePathname();
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-    };
+    const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchValue.trim()) {
-      window.location.href = `/search?q=${encodeURIComponent(searchValue)}`;
-    }
-  };
-
   return (
     <header
       className={cn(
-        'fixed top-0 left-0 right-0 z-50 transition-all duration-500 px-4 md:px-8 lg:px-16',
-        scrolled ? 'bg-netflix-black' : 'bg-gradient-to-b from-black/80 to-transparent'
+        'fixed top-0 left-0 right-0 z-50 transition-all duration-500',
+        scrolled
+          ? 'bg-netflix-black shadow-lg'
+          : 'bg-gradient-to-b from-black/80 to-transparent'
       )}
     >
-      <div className="flex items-center justify-between h-16 md:h-20">
+      <div className="flex items-center justify-between px-4 md:px-12 py-4">
         {/* Logo */}
         <div className="flex items-center gap-8">
-          <Link href="/" className="flex-shrink-0">
-            <span className="text-netflix-red font-black text-2xl md:text-3xl tracking-tight">
-              STREAMFLIX
-            </span>
+          <Link href="/browse" className="text-netflix-red font-extrabold text-2xl md:text-3xl tracking-tight">
+            NETFLIX
           </Link>
 
           {/* Desktop Nav */}
@@ -56,10 +43,7 @@ export default function Header() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={cn(
-                  'text-sm transition-colors hover:text-white',
-                  pathname === link.href ? 'text-white font-semibold' : 'text-gray-300'
-                )}
+                className="text-gray-300 hover:text-white text-sm transition-colors"
               >
                 {link.label}
               </Link>
@@ -69,66 +53,63 @@ export default function Header() {
 
         {/* Right side */}
         <div className="flex items-center gap-4">
-          {/* Search */}
-          <div className="flex items-center">
-            {searchOpen ? (
-              <form onSubmit={handleSearchSubmit} className="flex items-center">
-                <div className="flex items-center border border-white bg-black/80 px-3 py-1.5 rounded">
-                  <Search size={16} className="text-white mr-2" />
-                  <input
-                    type="text"
-                    value={searchValue}
-                    onChange={(e) => setSearchValue(e.target.value)}
-                    placeholder="Titles, people, genres"
-                    className="bg-transparent text-white text-sm outline-none w-40 md:w-56"
-                    autoFocus
-                    onBlur={() => {
-                      if (!searchValue) setSearchOpen(false);
-                    }}
-                  />
-                </div>
-              </form>
-            ) : (
-              <button
-                onClick={() => setSearchOpen(true)}
-                className="text-white hover:text-gray-300 transition-colors"
-                aria-label="Search"
-              >
-                <Search size={20} />
-              </button>
-            )}
-          </div>
+          <Link href="/search" className="text-gray-300 hover:text-white transition-colors">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
+          </Link>
 
-          <button className="text-white hover:text-gray-300 transition-colors relative" aria-label="Notifications">
-            <Bell size={20} />
-            <span className="absolute -top-1 -right-1 bg-netflix-red text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
-              3
-            </span>
+          {/* Notifications */}
+          <button className="text-gray-300 hover:text-white transition-colors hidden md:block">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+              />
+            </svg>
           </button>
 
-          <button className="flex items-center gap-2 group" aria-label="Profile">
-            <div className="w-8 h-8 rounded bg-red-700 flex items-center justify-center">
-              <User size={16} className="text-white" />
-            </div>
+          {/* Avatar */}
+          <div className="w-8 h-8 rounded bg-netflix-red flex items-center justify-center text-white text-sm font-bold cursor-pointer">
+            U
+          </div>
+
+          {/* Mobile menu toggle */}
+          <button
+            className="md:hidden text-white"
+            onClick={() => setMobileOpen(!mobileOpen)}
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
           </button>
         </div>
       </div>
 
       {/* Mobile Nav */}
-      <nav className="md:hidden flex items-center gap-4 pb-3 overflow-x-auto row-scroll">
-        {NAV_LINKS.map((link) => (
-          <Link
-            key={link.href}
-            href={link.href}
-            className={cn(
-              'text-sm whitespace-nowrap transition-colors hover:text-white',
-              pathname === link.href ? 'text-white font-semibold' : 'text-gray-300'
-            )}
-          >
-            {link.label}
-          </Link>
-        ))}
-      </nav>
+      {mobileOpen && (
+        <nav className="md:hidden bg-netflix-black border-t border-gray-800 px-4 py-4 flex flex-col gap-3">
+          {NAV_LINKS.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="text-gray-300 hover:text-white py-2 text-base transition-colors"
+              onClick={() => setMobileOpen(false)}
+            >
+              {link.label}
+            </Link>
+          ))}
+        </nav>
+      )}
     </header>
   );
 }
+
+export default Header;
