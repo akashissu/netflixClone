@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { FaPlay, FaPlus } from 'react-icons/fa';
 import { Movie } from '@/types';
-import DetailModal from './DetailModal';
+import { DetailModal } from './DetailModal';
 
 interface MovieGridProps {
   movies: Movie[];

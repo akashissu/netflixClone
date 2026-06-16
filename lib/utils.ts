@@ -1,32 +1,355 @@
-import { clsx, type ClassValue } from 'clsx';
-import { twMerge } from 'tailwind-merge';
+import { Track, Artist, Playlist, Album, Category } from '@/types';
 
-export function cn(...inputs: ClassValue[]): string {
-  return twMerge(clsx(inputs));
+export function formatDuration(seconds: number): string {
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = Math.floor(seconds % 60);
+  return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
 }
 
-export function formatDuration(minutes: number): string {
-  const h = Math.floor(minutes / 60);
-  const m = minutes % 60;
-  if (h === 0) return `${m}m`;
-  if (m === 0) return `${h}h`;
-  return `${h}h ${m}m`;
+export function formatNumber(num: number): string {
+  if (num >= 1_000_000_000) {
+    return `${(num / 1_000_000_000).toFixed(1)}B`;
+  }
+  if (num >= 1_000_000) {
+    return `${(num / 1_000_000).toFixed(1)}M`;
+  }
+  if (num >= 1_000) {
+    return `${(num / 1_000).toFixed(1)}K`;
+  }
+  return num.toString();
 }
 
-export function truncateText(text: string, maxLength: number): string {
-  if (text.length <= maxLength) return text;
-  return text.slice(0, maxLength).trimEnd() + '...';
+export function formatFollowers(num: number): string {
+  return new Intl.NumberFormat('en-US').format(num);
 }
 
-export function getMatchColor(score: number): string {
-  if (score >= 80) return 'text-green-400';
-  if (score >= 60) return 'text-yellow-400';
-  return 'text-red-400';
+export function cn(...classes: (string | undefined | null | boolean)[]): string {
+  return classes.filter(Boolean).join(' ');
 }
 
-export function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/(^-|-$)/g, '');
-}
+export const SAMPLE_TRACKS: Track[] = [
+  {
+    id: 'track-1',
+    title: 'Blinding Lights',
+    artist: 'The Weeknd',
+    artistId: 'artist-1',
+    album: 'After Hours',
+    albumId: 'album-1',
+    duration: 200,
+    coverUrl: 'https://picsum.photos/seed/track1/300/300',
+    explicit: false,
+    popularity: 98,
+  },
+  {
+    id: 'track-2',
+    title: 'As It Was',
+    artist: 'Harry Styles',
+    artistId: 'artist-2',
+    album: "Harry's House",
+    albumId: 'album-2',
+    duration: 167,
+    coverUrl: 'https://picsum.photos/seed/track2/300/300',
+    explicit: false,
+    popularity: 96,
+  },
+  {
+    id: 'track-3',
+    title: 'Stay',
+    artist: 'The Kid LAROI & Justin Bieber',
+    artistId: 'artist-3',
+    album: 'F*CK LOVE 3',
+    albumId: 'album-3',
+    duration: 141,
+    coverUrl: 'https://picsum.photos/seed/track3/300/300',
+    explicit: true,
+    popularity: 94,
+  },
+  {
+    id: 'track-4',
+    title: 'Levitating',
+    artist: 'Dua Lipa',
+    artistId: 'artist-4',
+    album: 'Future Nostalgia',
+    albumId: 'album-4',
+    duration: 203,
+    coverUrl: 'https://picsum.photos/seed/track4/300/300',
+    explicit: false,
+    popularity: 93,
+  },
+  {
+    id: 'track-5',
+    title: 'Peaches',
+    artist: 'Justin Bieber ft. Daniel Caesar',
+    artistId: 'artist-5',
+    album: 'Justice',
+    albumId: 'album-5',
+    duration: 198,
+    coverUrl: 'https://picsum.photos/seed/track5/300/300',
+    explicit: true,
+    popularity: 91,
+  },
+  {
+    id: 'track-6',
+    title: 'Good 4 U',
+    artist: 'Olivia Rodrigo',
+    artistId: 'artist-6',
+    album: 'SOUR',
+    albumId: 'album-6',
+    duration: 178,
+    coverUrl: 'https://picsum.photos/seed/track6/300/300',
+    explicit: false,
+    popularity: 95,
+  },
+  {
+    id: 'track-7',
+    title: 'Industry Baby',
+    artist: 'Lil Nas X & Jack Harlow',
+    artistId: 'artist-7',
+    album: 'MONTERO',
+    albumId: 'album-7',
+    duration: 212,
+    coverUrl: 'https://picsum.photos/seed/track7/300/300',
+    explicit: true,
+    popularity: 92,
+  },
+  {
+    id: 'track-8',
+    title: 'Shivers',
+    artist: 'Ed Sheeran',
+    artistId: 'artist-8',
+    album: '=',
+    albumId: 'album-8',
+    duration: 207,
+    coverUrl: 'https://picsum.photos/seed/track8/300/300',
+    explicit: false,
+    popularity: 89,
+  },
+  {
+    id: 'track-9',
+    title: 'Heat Waves',
+    artist: 'Glass Animals',
+    artistId: 'artist-9',
+    album: 'Dreamland',
+    albumId: 'album-9',
+    duration: 238,
+    coverUrl: 'https://picsum.photos/seed/track9/300/300',
+    explicit: false,
+    popularity: 90,
+  },
+  {
+    id: 'track-10',
+    title: 'Montero (Call Me By Your Name)',
+    artist: 'Lil Nas X',
+    artistId: 'artist-7',
+    album: 'MONTERO',
+    albumId: 'album-7',
+    duration: 137,
+    coverUrl: 'https://picsum.photos/seed/track10/300/300',
+    explicit: true,
+    popularity: 93,
+  },
+];
+
+export const SAMPLE_PLAYLISTS: Playlist[] = [
+  {
+    id: 'playlist-1',
+    name: 'Today\'s Top Hits',
+    description: 'Jung Kook is on top of the Hottest 50!',
+    coverUrl: 'https://picsum.photos/seed/playlist1/300/300',
+    owner: 'Spotify',
+    followers: 34567890,
+    isPublic: true,
+    tracks: SAMPLE_TRACKS.slice(0, 5),
+  },
+  {
+    id: 'playlist-2',
+    name: 'RapCaviar',
+    description: 'New music from Drake, Travis Scott and more.',
+    coverUrl: 'https://picsum.photos/seed/playlist2/300/300',
+    owner: 'Spotify',
+    followers: 15234567,
+    isPublic: true,
+    tracks: SAMPLE_TRACKS.slice(2, 7),
+  },
+  {
+    id: 'playlist-3',
+    name: 'All Out 2010s',
+    description: 'The biggest songs of the 2010s.',
+    coverUrl: 'https://picsum.photos/seed/playlist3/300/300',
+    owner: 'Spotify',
+    followers: 8765432,
+    isPublic: true,
+    tracks: SAMPLE_TRACKS.slice(1, 6),
+  },
+  {
+    id: 'playlist-4',
+    name: 'Chill Hits',
+    description: 'Kick back to the best new and recent chill hits.',
+    coverUrl: 'https://picsum.photos/seed/playlist4/300/300',
+    owner: 'Spotify',
+    followers: 12345678,
+    isPublic: true,
+    tracks: SAMPLE_TRACKS.slice(3, 8),
+  },
+  {
+    id: 'playlist-5',
+    name: 'Viva Latino',
+    description: 'Today\'s top Latin hits, elevando el nivel.',
+    coverUrl: 'https://picsum.photos/seed/playlist5/300/300',
+    owner: 'Spotify',
+    followers: 11234567,
+    isPublic: true,
+    tracks: SAMPLE_TRACKS.slice(4, 9),
+  },
+  {
+    id: 'playlist-6',
+    name: 'Rock Classics',
+    description: 'Rock legends & epic songs that continue to inspire generations.',
+    coverUrl: 'https://picsum.photos/seed/playlist6/300/300',
+    owner: 'Spotify',
+    followers: 9876543,
+    isPublic: true,
+    tracks: SAMPLE_TRACKS.slice(0, 4),
+  },
+];
+
+export const SAMPLE_ARTISTS: Artist[] = [
+  {
+    id: 'artist-1',
+    name: 'The Weeknd',
+    bio: 'Abel Makkonen Tesfaye, known professionally as The Weeknd, is a Canadian singer, songwriter, and record producer. He is known for his sonic versatility and dark lyricism.',
+    imageUrl: 'https://picsum.photos/seed/artist1/400/400',
+    genres: ['R&B', 'Pop', 'Alternative R&B'],
+    followers: 89234567,
+    monthlyListeners: 112000000,
+    verified: true,
+    topTracks: SAMPLE_TRACKS.slice(0, 5),
+    albums: [],
+  },
+  {
+    id: 'artist-2',
+    name: 'Harry Styles',
+    bio: 'Harry Edward Styles is an English singer, songwriter, and actor. His musical style has been described as a blend of pop, rock, soft rock, and folk pop.',
+    imageUrl: 'https://picsum.photos/seed/artist2/400/400',
+    genres: ['Pop', 'Soft Rock', 'Folk Pop'],
+    followers: 67890123,
+    monthlyListeners: 78000000,
+    verified: true,
+    topTracks: SAMPLE_TRACKS.slice(1, 6),
+    albums: [],
+  },
+  {
+    id: 'artist-4',
+    name: 'Dua Lipa',
+    bio: 'Dua Lipa is an English-Albanian singer and songwriter. After working as a model, she signed with a management company and began her musical career.',
+    imageUrl: 'https://picsum.photos/seed/artist4/400/400',
+    genres: ['Pop', 'Dance Pop', 'Electropop'],
+    followers: 72345678,
+    monthlyListeners: 85000000,
+    verified: true,
+    topTracks: SAMPLE_TRACKS.slice(3, 8),
+    albums: [],
+  },
+  {
+    id: 'artist-6',
+    name: 'Olivia Rodrigo',
+    bio: 'Olivia Isabel Rodrigo is an American singer-songwriter and actress. She began her career as an actress and rose to prominence with her debut single drivers license.',
+    imageUrl: 'https://picsum.photos/seed/artist6/400/400',
+    genres: ['Pop', 'Pop Rock', 'Indie Pop'],
+    followers: 45678901,
+    monthlyListeners: 56000000,
+    verified: true,
+    topTracks: SAMPLE_TRACKS.slice(5, 10),
+    albums: [],
+  },
+  {
+    id: 'artist-8',
+    name: 'Ed Sheeran',
+    bio: 'Edward Christopher Sheeran is an English singer-songwriter. He is known for his musical versatility, having worked in a range of genres including pop, folk, and R&B.',
+    imageUrl: 'https://picsum.photos/seed/artist8/400/400',
+    genres: ['Pop', 'Folk Pop', 'Acoustic'],
+    followers: 98765432,
+    monthlyListeners: 105000000,
+    verified: true,
+    topTracks: SAMPLE_TRACKS.slice(7, 10),
+    albums: [],
+  },
+];
+
+export const SAMPLE_ALBUMS: Album[] = [
+  {
+    id: 'album-1',
+    title: 'After Hours',
+    artist: 'The Weeknd',
+    artistId: 'artist-1',
+    coverUrl: 'https://picsum.photos/seed/album1/300/300',
+    releaseYear: 2020,
+    genre: 'R&B/Soul',
+    tracks: SAMPLE_TRACKS.slice(0, 3),
+  },
+  {
+    id: 'album-2',
+    title: "Harry's House",
+    artist: 'Harry Styles',
+    artistId: 'artist-2',
+    coverUrl: 'https://picsum.photos/seed/album2/300/300',
+    releaseYear: 2022,
+    genre: 'Pop',
+    tracks: SAMPLE_TRACKS.slice(1, 4),
+  },
+  {
+    id: 'album-4',
+    title: 'Future Nostalgia',
+    artist: 'Dua Lipa',
+    artistId: 'artist-4',
+    coverUrl: 'https://picsum.photos/seed/album4/300/300',
+    releaseYear: 2020,
+    genre: 'Dance Pop',
+    tracks: SAMPLE_TRACKS.slice(3, 6),
+  },
+  {
+    id: 'album-6',
+    title: 'SOUR',
+    artist: 'Olivia Rodrigo',
+    artistId: 'artist-6',
+    coverUrl: 'https://picsum.photos/seed/album6/300/300',
+    releaseYear: 2021,
+    genre: 'Pop Rock',
+    tracks: SAMPLE_TRACKS.slice(5, 8),
+  },
+  {
+    id: 'album-8',
+    title: '=',
+    artist: 'Ed Sheeran',
+    artistId: 'artist-8',
+    coverUrl: 'https://picsum.photos/seed/album8/300/300',
+    releaseYear: 2021,
+    genre: 'Pop',
+    tracks: SAMPLE_TRACKS.slice(7, 10),
+  },
+  {
+    id: 'album-9',
+    title: 'Dreamland',
+    artist: 'Glass Animals',
+    artistId: 'artist-9',
+    coverUrl: 'https://picsum.photos/seed/album9/300/300',
+    releaseYear: 2020,
+    genre: 'Indie Pop',
+    tracks: SAMPLE_TRACKS.slice(8, 10),
+  },
+];
+
+export const SAMPLE_CATEGORIES: Category[] = [
+  { id: 'cat-1', name: 'Pop', imageUrl: 'https://picsum.photos/seed/cat1/200/200', color: '#E91429' },
+  { id: 'cat-2', name: 'Hip-Hop', imageUrl: 'https://picsum.photos/seed/cat2/200/200', color: '#8D67AB' },
+  { id: 'cat-3', name: 'Rock', imageUrl: 'https://picsum.photos/seed/cat3/200/200', color: '#E8115B' },
+  { id: 'cat-4', name: 'R&B', imageUrl: 'https://picsum.photos/seed/cat4/200/200', color: '#1E3264' },
+  { id: 'cat-5', name: 'Electronic', imageUrl: 'https://picsum.photos/seed/cat5/200/200', color: '#0D73EC' },
+  { id: 'cat-6', name: 'Latin', imageUrl: 'https://picsum.photos/seed/cat6/200/200', color: '#E8115B' },
+  { id: 'cat-7', name: 'Country', imageUrl: 'https://picsum.photos/seed/cat7/200/200', color: '#8D67AB' },
+  { id: 'cat-8', name: 'Jazz', imageUrl: 'https://picsum.photos/seed/cat8/200/200', color: '#477D95' },
+  { id: 'cat-9', name: 'Classical', imageUrl: 'https://picsum.photos/seed/cat9/200/200', color: '#E91429' },
+  { id: 'cat-10', name: 'Podcasts', imageUrl: 'https://picsum.photos/seed/cat10/200/200', color: '#1E3264' },
+  { id: 'cat-11', name: 'Indie', imageUrl: 'https://picsum.photos/seed/cat11/200/200', color: '#0D73EC' },
+  { id: 'cat-12', name: 'Metal', imageUrl: 'https://picsum.photos/seed/cat12/200/200', color: '#477D95' },
+];

@@ -1,6 +1,6 @@
 import { Header } from '@/components/Header';
-import Footer from '@/components/Footer';
-import MovieCard from '@/components/MovieCard';
+import { Footer } from '@/components/Footer';
+import { MovieCard } from '@/components/MovieCard';
 import { ALL_TV_SHOWS } from '@/lib/data';
 
 export default function TVShowsPage() {

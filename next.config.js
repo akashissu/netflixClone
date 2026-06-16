@@ -1,23 +1,17 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: [
-      'image.tmdb.org',
-      'via.placeholder.com',
-      'picsum.photos'
-    ],
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'image.tmdb.org',
-        pathname: '/t/p/**'
+        hostname: 'picsum.photos',
       },
       {
         protocol: 'https',
-        hostname: 'picsum.photos'
-      }
-    ]
-  }
+        hostname: 'images.unsplash.com',
+      },
+    ],
+  },
 };
 
 module.exports = nextConfig;

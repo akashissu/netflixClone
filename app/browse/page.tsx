@@ -1,22 +1,80 @@
-import { Header } from '@/components/Header';
-import Footer from '@/components/Footer';
-import { HeroBanner } from '@/components/HeroBanner';
-import MovieRow from '@/components/MovieRow';
-import { FEATURED_MOVIE, MOVIE_ROWS } from '@/lib/data';
+'use client';
+
+import Link from 'next/link';
+import Image from 'next/image';
+import AlbumCard from '@/components/AlbumCard';
+import PlaylistCard from '@/components/PlaylistCard';
+import { SAMPLE_CATEGORIES, SAMPLE_ALBUMS, SAMPLE_PLAYLISTS } from '@/lib/utils';
 
 export default function BrowsePage() {
+  const charts = SAMPLE_PLAYLISTS.slice(0, 4);
+  const newReleases = SAMPLE_ALBUMS;
+
   return (
-    <div className="min-h-screen bg-netflix-black">
-      <Header />
-      <main>
-        <HeroBanner movie={FEATURED_MOVIE} />
-        <div className="relative z-10 -mt-32 pb-10 space-y-8">
-          {MOVIE_ROWS.map((row) => (
-            <MovieRow key={row.id} title={row.title} movies={row.movies} />
-          ))}
-        </div>
-      </main>
-      <Footer />
+    <div className="min-h-screen bg-spotify-darkgray">
+      {/* Header */}
+      <div className="sticky top-0 z-10 bg-spotify-darkgray/95 backdrop-blur-sm px-6 py-4 border-b border-white/5">
+        <h1 className="text-2xl font-bold text-white">Browse</h1>
+      </div>
+
+      <div className="px-6 py-6">
+        {/* Charts Section */}
+        <section className="mb-10">
+          <h2 className="text-2xl font-bold text-white mb-4">Charts</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            {charts.map((playlist) => (
+              <PlaylistCard key={playlist.id} playlist={playlist} />
+            ))}
+          </div>
+        </section>
+
+        {/* New Releases Section */}
+        <section className="mb-10">
+          <h2 className="text-2xl font-bold text-white mb-4">New Releases</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+            {newReleases.map((album) => (
+              <AlbumCard key={album.id} album={album} />
+            ))}
+          </div>
+        </section>
+
+        {/* Browse Categories */}
+        <section className="mb-10">
+          <h2 className="text-2xl font-bold text-white mb-4">Browse All</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+            {SAMPLE_CATEGORIES.map((category) => (
+              <Link
+                key={category.id}
+                href={`/search?category=${category.name.toLowerCase()}`}
+                className="relative overflow-hidden rounded-lg aspect-square cursor-pointer group"
+                style={{ backgroundColor: category.color }}
+              >
+                <div className="absolute inset-0 p-4">
+                  <span className="text-white font-bold text-lg leading-tight">{category.name}</span>
+                </div>
+                <div className="absolute bottom-0 right-0 w-20 h-20 transform rotate-12 translate-x-2 translate-y-2 group-hover:scale-110 transition-transform">
+                  <Image
+                    src={category.imageUrl}
+                    alt={category.name}
+                    fill
+                    className="object-cover rounded-md shadow-lg"
+                  />
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        {/* Featured Playlists */}
+        <section className="mb-10">
+          <h2 className="text-2xl font-bold text-white mb-4">Featured Playlists</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+            {SAMPLE_PLAYLISTS.map((playlist) => (
+              <PlaylistCard key={playlist.id} playlist={playlist} />
+            ))}
+          </div>
+        </section>
+      </div>
     </div>
   );
 }
