@@ -1,337 +1,377 @@
-import { Movie, MovieRow } from '@/types';
+import type { Movie, MovieRow as MovieRowType } from '@/types';
 
-const MOVIES: Movie[] = [
+export const FEATURED_MOVIE: Movie = {
+  id: 'stranger-things-s5',
+  title: 'Stranger Things',
+  description:
+    'When a young boy vanishes, a small town uncovers a mystery involving secret experiments, terrifying supernatural forces and one strange little girl. The final season brings the battle against the Upside Down to its epic conclusion.',
+  genre: 'Sci-Fi, Horror, Drama',
+  year: 2024,
+  rating: 'TV-14',
+  score: 97,
+  duration: '4 Seasons',
+  thumbnail: 'https://picsum.photos/seed/stranger-things/400/225',
+  backdrop: 'https://picsum.photos/seed/stranger-things-bg/1920/1080',
+  isTrending: true,
+  isNew: true,
+  type: 'tv'
+};
+
+export const ALL_MOVIES: Movie[] = [
   {
-    id: '1',
-    title: 'Stranger Things',
-    description: 'When a young boy vanishes, a small town uncovers a mystery involving secret experiments, terrifying supernatural forces, and one strange little girl.',
-    thumbnailUrl: 'https://picsum.photos/seed/stranger/400/225',
-    backdropUrl: 'https://picsum.photos/seed/strangerbg/1920/1080',
-    year: 2016,
-    rating: 'TV-14',
-    duration: '4 Seasons',
-    matchScore: 97,
-    genres: ['Drama', 'Fantasy', 'Horror'],
-    type: 'tv',
-    badge: 'TOP 10',
-    isFeatured: true,
-  },
-  {
-    id: '2',
-    title: 'The Dark Knight',
-    description: 'When the menace known as the Joker wreaks havoc and chaos on the people of Gotham, Batman must accept one of the greatest psychological and physical tests of his ability to fight injustice.',
-    thumbnailUrl: 'https://picsum.photos/seed/darkknight/400/225',
-    backdropUrl: 'https://picsum.photos/seed/darkknightbg/1920/1080',
-    year: 2008,
-    rating: 'PG-13',
-    duration: '2h 32m',
-    matchScore: 99,
-    genres: ['Action', 'Crime', 'Drama'],
-    type: 'movie',
-  },
-  {
-    id: '3',
-    title: 'Inception',
-    description: 'A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a C.E.O.',
-    thumbnailUrl: 'https://picsum.photos/seed/inception/400/225',
-    backdropUrl: 'https://picsum.photos/seed/inceptionbg/1920/1080',
-    year: 2010,
-    rating: 'PG-13',
-    duration: '2h 28m',
-    matchScore: 95,
-    genres: ['Action', 'Sci-Fi', 'Thriller'],
-    type: 'movie',
-  },
-  {
-    id: '4',
-    title: 'Breaking Bad',
-    description: 'A high school chemistry teacher diagnosed with inoperable lung cancer turns to manufacturing and selling methamphetamine in order to secure his family\'s future.',
-    thumbnailUrl: 'https://picsum.photos/seed/breakingbad/400/225',
-    backdropUrl: 'https://picsum.photos/seed/breakingbadbg/1920/1080',
-    year: 2008,
-    rating: 'TV-MA',
-    duration: '5 Seasons',
-    matchScore: 98,
-    genres: ['Crime', 'Drama', 'Thriller'],
-    type: 'tv',
-  },
-  {
-    id: '5',
-    title: 'The Witcher',
-    description: 'Geralt of Rivia, a solitary monster hunter, struggles to find his place in a world where people often prove more wicked than beasts.',
-    thumbnailUrl: 'https://picsum.photos/seed/witcher/400/225',
-    backdropUrl: 'https://picsum.photos/seed/witcherbg/1920/1080',
-    year: 2019,
-    rating: 'TV-MA',
-    duration: '3 Seasons',
-    matchScore: 88,
-    genres: ['Action', 'Fantasy', 'Drama'],
-    type: 'tv',
-  },
-  {
-    id: '6',
-    title: 'Interstellar',
-    description: 'A team of explorers travel through a wormhole in space in an attempt to ensure humanity\'s survival.',
-    thumbnailUrl: 'https://picsum.photos/seed/interstellar/400/225',
-    backdropUrl: 'https://picsum.photos/seed/interstellarbg/1920/1080',
-    year: 2014,
-    rating: 'PG-13',
-    duration: '2h 49m',
-    matchScore: 94,
-    genres: ['Adventure', 'Drama', 'Sci-Fi'],
-    type: 'movie',
-  },
-  {
-    id: '7',
-    title: 'Ozark',
-    description: 'A financial advisor drags his family from Chicago to the Missouri Ozarks, where he must launder money to appease a drug boss.',
-    thumbnailUrl: 'https://picsum.photos/seed/ozark/400/225',
-    backdropUrl: 'https://picsum.photos/seed/ozarkbg/1920/1080',
-    year: 2017,
-    rating: 'TV-MA',
-    duration: '4 Seasons',
-    matchScore: 92,
-    genres: ['Crime', 'Drama', 'Thriller'],
-    type: 'tv',
-  },
-  {
-    id: '8',
-    title: 'The Matrix',
-    description: 'A computer hacker learns from mysterious rebels about the true nature of his reality and his role in the war against its controllers.',
-    thumbnailUrl: 'https://picsum.photos/seed/matrix/400/225',
-    backdropUrl: 'https://picsum.photos/seed/matrixbg/1920/1080',
-    year: 1999,
-    rating: 'R',
-    duration: '2h 16m',
-    matchScore: 96,
-    genres: ['Action', 'Sci-Fi'],
-    type: 'movie',
-  },
-  {
-    id: '9',
-    title: 'Money Heist',
-    description: 'An unusual group of robbers attempt to carry out the most perfect robbery in Spanish history - stealing 2.4 billion euros from the Royal Mint of Spain.',
-    thumbnailUrl: 'https://picsum.photos/seed/moneyheist/400/225',
-    backdropUrl: 'https://picsum.photos/seed/moneyheistbg/1920/1080',
-    year: 2017,
-    rating: 'TV-MA',
-    duration: '5 Seasons',
-    matchScore: 91,
-    genres: ['Action', 'Crime', 'Mystery'],
-    type: 'tv',
-    badge: 'TOP 10',
-  },
-  {
-    id: '10',
-    title: 'Avengers: Endgame',
-    description: 'After the devastating events of Avengers: Infinity War, the universe is in ruins. With the help of remaining allies, the Avengers assemble once more in order to reverse Thanos\' actions and restore balance to the universe.',
-    thumbnailUrl: 'https://picsum.photos/seed/avengers/400/225',
-    backdropUrl: 'https://picsum.photos/seed/avengersbg/1920/1080',
-    year: 2019,
-    rating: 'PG-13',
-    duration: '3h 1m',
-    matchScore: 93,
-    genres: ['Action', 'Adventure', 'Drama'],
-    type: 'movie',
-  },
-  {
-    id: '11',
-    title: 'Squid Game',
-    description: 'Hundreds of cash-strapped players accept a strange invitation to compete in children\'s games. Inside, a tempting prize awaits with deadly high stakes.',
-    thumbnailUrl: 'https://picsum.photos/seed/squidgame/400/225',
-    backdropUrl: 'https://picsum.photos/seed/squidgamebg/1920/1080',
-    year: 2021,
-    rating: 'TV-MA',
-    duration: '2 Seasons',
-    matchScore: 97,
-    genres: ['Action', 'Drama', 'Mystery'],
-    type: 'tv',
-    badge: 'TOP 10',
-  },
-  {
-    id: '12',
-    title: 'Dune',
-    description: 'Feature adaptation of Frank Herbert\'s science fiction novel about the son of a noble family entrusted with the protection of the most valuable asset in the galaxy.',
-    thumbnailUrl: 'https://picsum.photos/seed/dune/400/225',
-    backdropUrl: 'https://picsum.photos/seed/dunebg/1920/1080',
-    year: 2021,
-    rating: 'PG-13',
-    duration: '2h 35m',
-    matchScore: 90,
-    genres: ['Adventure', 'Drama', 'Sci-Fi'],
-    type: 'movie',
-  },
-  {
-    id: '13',
-    title: 'The Crown',
-    description: 'Follows the political rivalries and romance of Queen Elizabeth II\'s reign and the events that shaped the second half of the twentieth century.',
-    thumbnailUrl: 'https://picsum.photos/seed/thecrown/400/225',
-    backdropUrl: 'https://picsum.photos/seed/thecrownbg/1920/1080',
-    year: 2016,
-    rating: 'TV-MA',
-    duration: '6 Seasons',
-    matchScore: 89,
-    genres: ['Biography', 'Drama', 'History'],
-    type: 'tv',
-  },
-  {
-    id: '14',
-    title: 'Parasite',
-    description: 'Greed and class discrimination threaten the newly formed symbiotic relationship between the wealthy Park family and the destitute Kim clan.',
-    thumbnailUrl: 'https://picsum.photos/seed/parasite/400/225',
-    backdropUrl: 'https://picsum.photos/seed/parasitebg/1920/1080',
-    year: 2019,
-    rating: 'R',
-    duration: '2h 12m',
-    matchScore: 96,
-    genres: ['Comedy', 'Drama', 'Thriller'],
-    type: 'movie',
-  },
-  {
-    id: '15',
-    title: 'Wednesday',
-    description: 'Smart, sarcastic and a little dead inside, Wednesday Addams investigates a murder spree while making new friends and enemies at Nevermore Academy.',
-    thumbnailUrl: 'https://picsum.photos/seed/wednesday/400/225',
-    backdropUrl: 'https://picsum.photos/seed/wednesdaybg/1920/1080',
-    year: 2022,
-    rating: 'TV-14',
-    duration: '2 Seasons',
-    matchScore: 94,
-    genres: ['Comedy', 'Fantasy', 'Horror'],
-    type: 'tv',
-    badge: 'NEW',
-  },
-  {
-    id: '16',
+    id: 'oppenheimer',
     title: 'Oppenheimer',
-    description: 'The story of American scientist J. Robert Oppenheimer and his role in the development of the atomic bomb during World War II.',
-    thumbnailUrl: 'https://picsum.photos/seed/oppenheimer/400/225',
-    backdropUrl: 'https://picsum.photos/seed/oppenheimerbg/1920/1080',
+    description:
+      'The story of J. Robert Oppenheimer and his role in the development of the atomic bomb during World War II.',
+    genre: 'Drama, History, Thriller',
     year: 2023,
     rating: 'R',
+    score: 94,
     duration: '3h',
-    matchScore: 95,
-    genres: ['Biography', 'Drama', 'History'],
-    type: 'movie',
-    badge: 'NEW',
+    thumbnail: 'https://picsum.photos/seed/oppenheimer/400/225',
+    backdrop: 'https://picsum.photos/seed/oppenheimer-bg/1920/1080',
+    isTrending: true,
+    isNew: false,
+    type: 'movie'
   },
   {
-    id: '17',
-    title: 'Black Mirror',
-    description: 'An anthology series exploring a twisted, high-tech multiverse where humanity\'s greatest innovations and darkest instincts collide.',
-    thumbnailUrl: 'https://picsum.photos/seed/blackmirror/400/225',
-    backdropUrl: 'https://picsum.photos/seed/blackmirrorbg/1920/1080',
-    year: 2011,
-    rating: 'TV-MA',
-    duration: '6 Seasons',
-    matchScore: 91,
-    genres: ['Drama', 'Sci-Fi', 'Thriller'],
-    type: 'tv',
-  },
-  {
-    id: '18',
+    id: 'barbie',
     title: 'Barbie',
-    description: 'Barbie and Ken are having the time of their lives in the colorful and seemingly perfect world of Barbie Land. However, when they get a chance to go to the real world, they soon discover the joys and perils of living among humans.',
-    thumbnailUrl: 'https://picsum.photos/seed/barbie/400/225',
-    backdropUrl: 'https://picsum.photos/seed/barbiebg/1920/1080',
+    description:
+      'Barbie and Ken are having the time of their lives in the colorful and seemingly perfect world of Barbie Land. When they get a chance to go to the real world, things get complicated.',
+    genre: 'Comedy, Adventure, Fantasy',
     year: 2023,
     rating: 'PG-13',
+    score: 88,
     duration: '1h 54m',
-    matchScore: 87,
-    genres: ['Adventure', 'Comedy', 'Fantasy'],
-    type: 'movie',
-    badge: 'NEW',
+    thumbnail: 'https://picsum.photos/seed/barbie/400/225',
+    backdrop: 'https://picsum.photos/seed/barbie-bg/1920/1080',
+    isTrending: false,
+    isNew: false,
+    type: 'movie'
   },
   {
-    id: '19',
-    title: 'Peaky Blinders',
-    description: 'A gangster family epic set in 1900s England, centering on a gang who sew razor blades in the peaks of their caps, and their fierce boss Tommy Shelby.',
-    thumbnailUrl: 'https://picsum.photos/seed/peakyblinders/400/225',
-    backdropUrl: 'https://picsum.photos/seed/peakyblinderbg/1920/1080',
-    year: 2013,
-    rating: 'TV-MA',
-    duration: '6 Seasons',
-    matchScore: 96,
-    genres: ['Crime', 'Drama'],
-    type: 'tv',
-  },
-  {
-    id: '20',
-    title: 'The Social Network',
-    description: 'As Harvard student Mark Zuckerberg creates the social networking site that would become known as Facebook, he is sued by the twins who claimed he stole their idea, and by the co-founder who was later squeezed out of the business.',
-    thumbnailUrl: 'https://picsum.photos/seed/socialnetwork/400/225',
-    backdropUrl: 'https://picsum.photos/seed/socialnetworkbg/1920/1080',
-    year: 2010,
+    id: 'dune-part-two',
+    title: 'Dune: Part Two',
+    description:
+      'Paul Atreides unites with Chani and the Fremen while seeking revenge against the conspirators who destroyed his family.',
+    genre: 'Sci-Fi, Adventure, Drama',
+    year: 2024,
     rating: 'PG-13',
-    duration: '2h',
-    matchScore: 93,
-    genres: ['Biography', 'Drama'],
-    type: 'movie',
+    score: 92,
+    duration: '2h 46m',
+    thumbnail: 'https://picsum.photos/seed/dune2/400/225',
+    backdrop: 'https://picsum.photos/seed/dune2-bg/1920/1080',
+    isTrending: true,
+    isNew: true,
+    type: 'movie'
   },
+  {
+    id: 'poor-things',
+    title: 'Poor Things',
+    description:
+      'The incredible tale about the fantastical evolution of Bella Baxter, a young woman brought back to life by the brilliant and unorthodox scientist Dr. Godwin Baxter.',
+    genre: 'Comedy, Drama, Romance',
+    year: 2023,
+    rating: 'R',
+    score: 91,
+    duration: '2h 21m',
+    thumbnail: 'https://picsum.photos/seed/poor-things/400/225',
+    backdrop: 'https://picsum.photos/seed/poor-things-bg/1920/1080',
+    isTrending: false,
+    isNew: false,
+    type: 'movie'
+  },
+  {
+    id: 'killers-flower-moon',
+    title: 'Killers of the Flower Moon',
+    description:
+      'Members of the Osage Nation are murdered under mysterious circumstances in the 1920s, sparking a major FBI investigation.',
+    genre: 'Crime, Drama, History',
+    year: 2023,
+    rating: 'R',
+    score: 89,
+    duration: '3h 26m',
+    thumbnail: 'https://picsum.photos/seed/killers-flower/400/225',
+    backdrop: 'https://picsum.photos/seed/killers-flower-bg/1920/1080',
+    isTrending: false,
+    isNew: false,
+    type: 'movie'
+  },
+  {
+    id: 'past-lives',
+    title: 'Past Lives',
+    description:
+      'Two childhood friends are separated and then reunited over two decades, forced to confront notions of love, fate, and the choices that make a life.',
+    genre: 'Drama, Romance',
+    year: 2023,
+    rating: 'PG-13',
+    score: 96,
+    duration: '1h 46m',
+    thumbnail: 'https://picsum.photos/seed/past-lives/400/225',
+    backdrop: 'https://picsum.photos/seed/past-lives-bg/1920/1080',
+    isTrending: false,
+    isNew: false,
+    type: 'movie'
+  },
+  {
+    id: 'the-holdovers',
+    title: 'The Holdovers',
+    description:
+      'A curmudgeonly instructor at a New England prep school is forced to remain on campus during Christmas break to babysit the handful of students with nowhere to go.',
+    genre: 'Comedy, Drama',
+    year: 2023,
+    rating: 'R',
+    score: 90,
+    duration: '2h 13m',
+    thumbnail: 'https://picsum.photos/seed/holdovers/400/225',
+    backdrop: 'https://picsum.photos/seed/holdovers-bg/1920/1080',
+    isTrending: false,
+    isNew: false,
+    type: 'movie'
+  },
+  {
+    id: 'maestro',
+    title: 'Maestro',
+    description:
+      'A towering and fearless love story chronicling the lifelong relationship between Leonard Bernstein and Felicia Montealegre Cohn Bernstein.',
+    genre: 'Biography, Drama, Music',
+    year: 2023,
+    rating: 'R',
+    score: 82,
+    duration: '2h 9m',
+    thumbnail: 'https://picsum.photos/seed/maestro/400/225',
+    backdrop: 'https://picsum.photos/seed/maestro-bg/1920/1080',
+    isTrending: false,
+    isNew: false,
+    type: 'movie'
+  },
+  {
+    id: 'society-snow',
+    title: 'Society of the Snow',
+    description:
+      'A Uruguayan rugby team stranded in the Andes following a plane crash must resort to extreme measures to survive.',
+    genre: 'Drama, History, Thriller',
+    year: 2023,
+    rating: 'R',
+    score: 93,
+    duration: '2h 24m',
+    thumbnail: 'https://picsum.photos/seed/society-snow/400/225',
+    backdrop: 'https://picsum.photos/seed/society-snow-bg/1920/1080',
+    isTrending: true,
+    isNew: false,
+    type: 'movie'
+  },
+  {
+    id: 'leave-world-behind',
+    title: 'Leave the World Behind',
+    description:
+      'A family vacation is disrupted by two strangers bearing news of a mysterious blackout. As the threat grows, both families must navigate a terrifying new reality.',
+    genre: 'Drama, Mystery, Thriller',
+    year: 2023,
+    rating: 'R',
+    score: 67,
+    duration: '2h 18m',
+    thumbnail: 'https://picsum.photos/seed/leave-world/400/225',
+    backdrop: 'https://picsum.photos/seed/leave-world-bg/1920/1080',
+    isTrending: false,
+    isNew: false,
+    type: 'movie'
+  },
+  {
+    id: 'rebel-ridge',
+    title: 'Rebel Ridge',
+    description:
+      'A former Marine arrives in a small Southern town to pay his cousin\'s bail, only to have his money seized by corrupt local police.',
+    genre: 'Action, Thriller',
+    year: 2024,
+    rating: 'R',
+    score: 88,
+    duration: '2h 10m',
+    thumbnail: 'https://picsum.photos/seed/rebel-ridge/400/225',
+    backdrop: 'https://picsum.photos/seed/rebel-ridge-bg/1920/1080',
+    isTrending: true,
+    isNew: true,
+    type: 'movie'
+  },
+  {
+    id: 'atlas',
+    title: 'Atlas',
+    description:
+      'A data analyst with a deep distrust of AI joins a mission to capture a renegade robot with whom she shares a mysterious past.',
+    genre: 'Action, Sci-Fi',
+    year: 2024,
+    rating: 'PG-13',
+    score: 55,
+    duration: '1h 58m',
+    thumbnail: 'https://picsum.photos/seed/atlas-movie/400/225',
+    backdrop: 'https://picsum.photos/seed/atlas-movie-bg/1920/1080',
+    isTrending: false,
+    isNew: true,
+    type: 'movie'
+  }
 ];
 
-export function getFeaturedMovie(): Movie {
-  return MOVIES.find((m) => m.isFeatured) || MOVIES[0];
-}
+export const ALL_TV_SHOWS: Movie[] = [
+  {
+    id: 'stranger-things',
+    title: 'Stranger Things',
+    description:
+      'When a young boy vanishes, a small town uncovers a mystery involving secret experiments, terrifying supernatural forces and one strange little girl.',
+    genre: 'Sci-Fi, Horror, Drama',
+    year: 2016,
+    rating: 'TV-14',
+    score: 97,
+    duration: '4 Seasons',
+    thumbnail: 'https://picsum.photos/seed/stranger-things/400/225',
+    backdrop: 'https://picsum.photos/seed/stranger-things-bg/1920/1080',
+    isTrending: true,
+    isNew: false,
+    type: 'tv'
+  },
+  {
+    id: 'the-crown',
+    title: 'The Crown',
+    description:
+      'This drama follows the political rivalries and romance of Queen Elizabeth II\'s reign and the events that shaped the second half of the 20th century.',
+    genre: 'Drama, History, Biography',
+    year: 2016,
+    rating: 'TV-MA',
+    score: 88,
+    duration: '6 Seasons',
+    thumbnail: 'https://picsum.photos/seed/the-crown/400/225',
+    backdrop: 'https://picsum.photos/seed/the-crown-bg/1920/1080',
+    isTrending: false,
+    isNew: false,
+    type: 'tv'
+  },
+  {
+    id: 'wednesday',
+    title: 'Wednesday',
+    description:
+      'Smart, sarcastic and a little dead inside, Wednesday Addams investigates a murder spree while making new friends and enemies at Nevermore Academy.',
+    genre: 'Comedy, Fantasy, Horror',
+    year: 2022,
+    rating: 'TV-14',
+    score: 91,
+    duration: '2 Seasons',
+    thumbnail: 'https://picsum.photos/seed/wednesday/400/225',
+    backdrop: 'https://picsum.photos/seed/wednesday-bg/1920/1080',
+    isTrending: true,
+    isNew: true,
+    type: 'tv'
+  },
+  {
+    id: 'squid-game',
+    title: 'Squid Game',
+    description:
+      'Hundreds of cash-strapped players accept a strange invitation to compete in children\'s games. Inside, a tempting prize awaits with deadly high stakes.',
+    genre: 'Action, Drama, Mystery',
+    year: 2021,
+    rating: 'TV-MA',
+    score: 95,
+    duration: '2 Seasons',
+    thumbnail: 'https://picsum.photos/seed/squid-game/400/225',
+    backdrop: 'https://picsum.photos/seed/squid-game-bg/1920/1080',
+    isTrending: true,
+    isNew: false,
+    type: 'tv'
+  },
+  {
+    id: 'bridgerton',
+    title: 'Bridgerton',
+    description:
+      'Wealth, lust, and betrayal set against the backdrop of Regency-era England, seen through the eyes of the powerful Bridgerton family.',
+    genre: 'Drama, Romance',
+    year: 2020,
+    rating: 'TV-MA',
+    score: 83,
+    duration: '3 Seasons',
+    thumbnail: 'https://picsum.photos/seed/bridgerton/400/225',
+    backdrop: 'https://picsum.photos/seed/bridgerton-bg/1920/1080',
+    isTrending: false,
+    isNew: false,
+    type: 'tv'
+  },
+  {
+    id: 'ozark',
+    title: 'Ozark',
+    description:
+      'A financial advisor drags his family from Chicago to the Missouri Ozarks, where he must launder money to appease a drug boss.',
+    genre: 'Crime, Drama, Thriller',
+    year: 2017,
+    rating: 'TV-MA',
+    score: 92,
+    duration: '4 Seasons',
+    thumbnail: 'https://picsum.photos/seed/ozark/400/225',
+    backdrop: 'https://picsum.photos/seed/ozark-bg/1920/1080',
+    isTrending: false,
+    isNew: false,
+    type: 'tv'
+  },
+  {
+    id: 'dark',
+    title: 'Dark',
+    description:
+      'A family saga with a supernatural twist, set in a German town where the disappearance of two young children exposes the relationships among four families.',
+    genre: 'Crime, Drama, Mystery',
+    year: 2017,
+    rating: 'TV-MA',
+    score: 96,
+    duration: '3 Seasons',
+    thumbnail: 'https://picsum.photos/seed/dark-show/400/225',
+    backdrop: 'https://picsum.photos/seed/dark-show-bg/1920/1080',
+    isTrending: false,
+    isNew: false,
+    type: 'tv'
+  },
+  {
+    id: 'money-heist',
+    title: 'Money Heist',
+    description:
+      'A criminal mastermind who goes by "The Professor" has a plan to pull off the biggest heist in recorded history — to print billions of euros in the Royal Mint of Spain.',
+    genre: 'Action, Crime, Mystery',
+    year: 2017,
+    rating: 'TV-MA',
+    score: 90,
+    duration: '5 Seasons',
+    thumbnail: 'https://picsum.photos/seed/money-heist/400/225',
+    backdrop: 'https://picsum.photos/seed/money-heist-bg/1920/1080',
+    isTrending: false,
+    isNew: false,
+    type: 'tv'
+  }
+];
 
-export function getAllMovies(): Movie[] {
-  return MOVIES.filter((m) => m.type === 'movie');
-}
-
-export function getAllTVShows(): Movie[] {
-  return MOVIES.filter((m) => m.type === 'tv');
-}
-
-export function searchMovies(query: string): Movie[] {
-  const q = query.toLowerCase();
-  return MOVIES.filter(
-    (m) =>
-      m.title.toLowerCase().includes(q) ||
-      m.description.toLowerCase().includes(q) ||
-      m.genres.some((g) => g.toLowerCase().includes(q))
-  );
-}
-
-export function getMyListMovies(): Movie[] {
-  return MOVIES.slice(0, 6);
-}
-
-export function getMovieRows(): MovieRow[] {
-  return [
-    {
-      id: 'trending',
-      title: 'Trending Now',
-      movies: MOVIES.slice(0, 10),
-    },
-    {
-      id: 'new-releases',
-      title: 'New Releases',
-      movies: MOVIES.filter((m) => m.badge === 'NEW' || m.year >= 2021),
-    },
-    {
-      id: 'top10',
-      title: 'Top 10 on StreamFlix Today',
-      movies: MOVIES.filter((m) => m.badge === 'TOP 10' || m.matchScore >= 93).slice(0, 10),
-    },
-    {
-      id: 'action',
-      title: 'Action & Adventure',
-      movies: MOVIES.filter((m) => m.genres.includes('Action')),
-    },
-    {
-      id: 'drama',
-      title: 'Award-Winning Dramas',
-      movies: MOVIES.filter((m) => m.genres.includes('Drama')),
-    },
-    {
-      id: 'scifi',
-      title: 'Sci-Fi & Fantasy',
-      movies: MOVIES.filter((m) => m.genres.includes('Sci-Fi') || m.genres.includes('Fantasy')),
-    },
-    {
-      id: 'crime',
-      title: 'Crime & Thriller',
-      movies: MOVIES.filter((m) => m.genres.includes('Crime') || m.genres.includes('Thriller')),
-    },
-  ];
-}
+export const MOVIE_ROWS: MovieRowType[] = [
+  {
+    id: 'trending',
+    title: 'Trending Now',
+    movies: ALL_MOVIES.filter((m) => m.isTrending)
+  },
+  {
+    id: 'new-arrivals',
+    title: 'New Arrivals',
+    movies: ALL_MOVIES.filter((m) => m.isNew)
+  },
+  {
+    id: 'top-movies',
+    title: 'Top Movies',
+    movies: ALL_MOVIES.slice(0, 8)
+  },
+  {
+    id: 'top-tv',
+    title: 'Popular TV Shows',
+    movies: ALL_TV_SHOWS
+  },
+  {
+    id: 'action',
+    title: 'Action & Adventure',
+    movies: ALL_MOVIES.filter((m) => m.genre.includes('Action') || m.genre.includes('Thriller'))
+  },
+  {
+    id: 'drama',
+    title: 'Award-Winning Dramas',
+    movies: ALL_MOVIES.filter((m) => m.genre.includes('Drama'))
+  }
+];

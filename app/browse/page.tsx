@@ -1,28 +1,22 @@
-import Header from '@/components/Header';
-import MovieRow from '@/components/MovieRow';
+import { Header } from '@/components/Header';
 import Footer from '@/components/Footer';
-import { getMovieRows } from '@/lib/movieData';
+import { HeroBanner } from '@/components/HeroBanner';
+import MovieRow from '@/components/MovieRow';
+import { FEATURED_MOVIE, MOVIE_ROWS } from '@/lib/data';
 
 export default function BrowsePage() {
-  const movieRows = getMovieRows();
-
   return (
-    <main className="bg-netflix-black min-h-screen">
+    <div className="min-h-screen bg-netflix-black">
       <Header />
-      <div className="pt-24 pb-20">
-        <div className="px-4 md:px-12 mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-white">Browse All Content</h1>
-          <p className="text-netflix-lightgray mt-2 text-lg">
-            Explore thousands of movies and TV shows across all genres
-          </p>
-        </div>
-        <div className="space-y-2">
-          {movieRows.map((row) => (
+      <main>
+        <HeroBanner movie={FEATURED_MOVIE} />
+        <div className="relative z-10 -mt-32 pb-10 space-y-8">
+          {MOVIE_ROWS.map((row) => (
             <MovieRow key={row.id} title={row.title} movies={row.movies} />
           ))}
         </div>
-      </div>
+      </main>
       <Footer />
-    </main>
+    </div>
   );
 }

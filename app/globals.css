@@ -5,7 +5,7 @@
 :root {
   --netflix-red: #E50914;
   --netflix-black: #141414;
-  --netflix-dark: #181818;
+  --netflix-dark-gray: #181818;
 }
 
 * {
@@ -20,6 +20,9 @@ body {
   overflow-x: hidden;
   background-color: #141414;
   color: #ffffff;
+}
+
+body {
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
@@ -42,100 +45,32 @@ body {
   background: #888;
 }
 
-/* Row scroll */
-.row-scroll {
+/* Movie row horizontal scroll */
+.movie-row-scroll {
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
 
-.row-scroll::-webkit-scrollbar {
+.movie-row-scroll::-webkit-scrollbar {
   display: none;
 }
 
 /* Card hover effect */
-.movie-card {
+.movie-card-hover {
+  transition: transform 0.3s ease, z-index 0s 0.3s;
+}
+
+.movie-card-hover:hover {
+  transform: scale(1.08);
+  z-index: 10;
   transition: transform 0.3s ease, z-index 0s;
 }
 
-.movie-card:hover {
-  transform: scale(1.05);
-  z-index: 10;
-}
-
 /* Gradient overlays */
-.hero-gradient {
-  background: linear-gradient(
-    to right,
-    rgba(20, 20, 20, 0.9) 0%,
-    rgba(20, 20, 20, 0.6) 50%,
-    rgba(20, 20, 20, 0) 100%
-  );
+.gradient-bottom {
+  background: linear-gradient(to top, #141414 0%, transparent 100%);
 }
 
-.hero-bottom-gradient {
-  background: linear-gradient(
-    to top,
-    rgba(20, 20, 20, 1) 0%,
-    rgba(20, 20, 20, 0.5) 50%,
-    rgba(20, 20, 20, 0) 100%
-  );
-}
-
-/* Modal backdrop */
-.modal-backdrop {
-  backdrop-filter: blur(4px);
-  background-color: rgba(0, 0, 0, 0.75);
-}
-
-/* Loading skeleton animation */
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-
-.skeleton {
-  background: linear-gradient(
-    90deg,
-    #2f2f2f 25%,
-    #3f3f3f 50%,
-    #2f2f2f 75%
-  );
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
-}
-
-/* Video player */
-.video-container {
-  position: relative;
-  padding-bottom: 56.25%;
-  height: 0;
-  overflow: hidden;
-}
-
-.video-container iframe,
-.video-container video {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-
-/* Netflix button styles */
-.btn-netflix {
-  @apply bg-netflix-red hover:bg-netflix-red-dark text-white font-semibold px-6 py-2 rounded transition-colors duration-200;
-}
-
-.btn-secondary {
-  @apply bg-gray-600 hover:bg-gray-500 text-white font-semibold px-6 py-2 rounded transition-colors duration-200;
-}
-
-/* Search input */
-.search-input {
-  @apply bg-black bg-opacity-80 border border-gray-600 text-white placeholder-gray-400 rounded px-4 py-2 focus:outline-none focus:border-white transition-all duration-300;
-}
-
-/* Maturity rating badge */
-.maturity-badge {
-  @apply border border-gray-400 text-gray-300 text-xs px-1.5 py-0.5 rounded;
+.gradient-top {
+  background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, transparent 100%);
 }
