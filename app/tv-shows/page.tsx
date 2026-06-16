@@ -1,4 +1,4 @@
-import { Header } from '@/components/Header';
+import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import MovieCard from '@/components/MovieCard';
 import { ALL_TV_SHOWS } from '@/lib/data';
@@ -27,7 +27,7 @@ export default function TVShowsPage() {
         {/* TV Shows Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
           {ALL_TV_SHOWS.map((show) => (
-            <MovieCard key={show.id} movie={show} />
+            <MovieCard key={show.id} title={show} />
           ))}
         </div>
       </main>

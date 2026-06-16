@@ -1,6 +1,6 @@
-import { Header } from '@/components/Header';
-import { Footer } from '@/components/Footer';
-import { MovieCard } from '@/components/MovieCard';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
+import MovieCard from '@/components/MovieCard';
 import { ALL_MOVIES } from '@/lib/data';
 
 const MY_LIST = ALL_MOVIES.slice(0, 8);
@@ -35,7 +35,7 @@ export default function MyListPage() {
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
             {MY_LIST.map((movie) => (
-              <MovieCard key={movie.id} movie={movie} />
+              <MovieCard key={movie.id} title={movie} />
             ))}
           </div>
         )}

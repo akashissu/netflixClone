@@ -1,8 +1,7 @@
-import Link from 'next/link';
-import { Header } from '@/components/Header';
-import { Footer } from '@/components/Footer';
-import { MovieRow } from '@/components/MovieRow';
-import { ALL_MOVIES, MOVIE_ROWS } from '@/lib/data';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
+import MovieCard from '@/components/MovieCard';
+import { ALL_MOVIES } from '@/lib/data';
 import type { Movie } from '@/types';
 
 interface TitlePageProps {
@@ -10,14 +9,14 @@ interface TitlePageProps {
 }
 
 export async function generateStaticParams() {
-  return ALL_MOVIES.map((movie) => ({ id: movie.id }));
+  return ALL_MOVIES.map((movie) => ({ id: String(movie.id) }));
 }
 
 export default function TitlePage({ params }: TitlePageProps) {
   const movie: Movie =
-    ALL_MOVIES.find((m) => m.id === params.id) ??
+    ALL_MOVIES.find((m) => String(m.id) === params.id) ??
     ({
-      id: params.id,
+      id: Number(params.id),
       title: 'Unknown Title',
       description: 'No description available.',
       genre: 'Unknown',
@@ -32,7 +31,7 @@ export default function TitlePage({ params }: TitlePageProps) {
       type: 'movie'
     } as Movie);
 
-  const similarMovies = MOVIE_ROWS[0]?.movies ?? [];
+  const similarMovies = ALL_MOVIES.filter((item) => item.genre === movie.genre && item.id !== movie.id).slice(0, 10);
 
   return (
     <div className="min-h-screen bg-netflix-black">
@@ -106,7 +105,12 @@ export default function TitlePage({ params }: TitlePageProps) {
 
       {/* Similar Titles */}
       <div className="pb-16">
-        <MovieRow title="More Like This" movies={similarMovies} />
+        <h3 className="text-xl md:text-2xl font-bold text-white mb-4">More Like This</h3>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+          {similarMovies.map((similar) => (
+            <MovieCard key={similar.id} title={similar} />
+          ))}
+        </div>
       </div>
 
       <Footer />
