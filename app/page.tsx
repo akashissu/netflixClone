@@ -1,18 +1,23 @@
+import Header from '@/components/Header';
 import HeroBanner from '@/components/HeroBanner';
 import MovieRow from '@/components/MovieRow';
-import { featuredMovie, trendingNow, topRated, actionMovies, comedyMovies, documentaries } from '@/lib/data';
+import Footer from '@/components/Footer';
+import { getFeaturedMovie, getMovieRows } from '@/lib/movieData';
 
 export default function HomePage() {
+  const featuredMovie = getFeaturedMovie();
+  const movieRows = getMovieRows();
+
   return (
-    <div className="bg-netflix-black">
+    <main className="bg-netflix-black min-h-screen">
+      <Header />
       <HeroBanner movie={featuredMovie} />
-      <div className="relative z-10 -mt-32 pb-20 space-y-8">
-        <MovieRow title="Trending Now" movies={trendingNow} />
-        <MovieRow title="Top Rated" movies={topRated} />
-        <MovieRow title="Action & Adventure" movies={actionMovies} />
-        <MovieRow title="Comedy" movies={comedyMovies} />
-        <MovieRow title="Documentaries" movies={documentaries} />
+      <div className="relative z-10 -mt-32 pb-20">
+        {movieRows.map((row) => (
+          <MovieRow key={row.id} title={row.title} movies={row.movies} />
+        ))}
       </div>
-    </div>
+      <Footer />
+    </main>
   );
 }

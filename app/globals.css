@@ -19,16 +19,7 @@ body {
   max-width: 100vw;
   overflow-x: hidden;
   background-color: #141414;
-  color: #ffffff;
-}
-
-body {
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
+  color: white;
 }
 
 /* Custom scrollbar */
@@ -60,15 +51,15 @@ a {
   display: none;
 }
 
-/* Card hover effect */
-.movie-card {
-  transition: transform 0.3s ease, z-index 0s 0.3s;
+/* Smooth transitions */
+.card-hover {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.movie-card:hover {
-  transform: scale(1.08);
+.card-hover:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
   z-index: 10;
-  transition: transform 0.3s ease, z-index 0s;
 }
 
 /* Hero gradient */
@@ -87,4 +78,25 @@ a {
     rgba(20, 20, 20, 1) 0%,
     rgba(20, 20, 20, 0) 100%
   );
+}
+
+/* Modal backdrop */
+.modal-backdrop {
+  backdrop-filter: blur(4px);
+  background-color: rgba(0, 0, 0, 0.75);
+}
+
+/* Line clamp utilities */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }

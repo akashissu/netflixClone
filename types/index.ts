@@ -2,21 +2,25 @@ export interface Movie {
   id: string;
   title: string;
   description: string;
-  thumbnailUrl: string;
-  backdropUrl: string;
-  year: number;
+  year: string;
   rating: string;
   duration: string;
-  genre: string[];
-  type: 'movie' | 'tv';
-  matchPercent: number;
-  ageRating: string;
-  color?: string;
-  colorEnd?: string;
+  matchScore: number;
+  genres: string[];
+  thumbnailUrl: string;
+  backdropUrl: string;
   cast?: string[];
   director?: string;
+  badge?: string;
+  type: 'movie' | 'tv';
   seasons?: number;
   episodes?: number;
+}
+
+export interface MovieRow {
+  id: string;
+  title: string;
+  movies: Movie[];
 }
 
 export interface User {
@@ -36,16 +40,28 @@ export interface Genre {
 
 export interface SearchResult {
   movies: Movie[];
-  tvShows: Movie[];
+  query: string;
   total: number;
 }
 
 export interface NavLink {
-  href: string;
   label: string;
-  icon?: string;
+  href: string;
+}
+
+export interface HeroContent {
+  movie: Movie;
+  autoPlay?: boolean;
+  muted?: boolean;
 }
 
 export type ContentType = 'movie' | 'tv' | 'all';
 
-export type SortOption = 'trending' | 'rating' | 'newest' | 'alphabetical';
+export type SortOption = 'trending' | 'newest' | 'rating' | 'alphabetical';
+
+export interface FilterOptions {
+  genre?: string;
+  type?: ContentType;
+  sort?: SortOption;
+  year?: string;
+}
