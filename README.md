@@ -4,24 +4,22 @@ A production-ready Netflix clone built with Next.js 14 (App Router), TypeScript,
 
 ## 🚀 Features
 
-- **Hero Banner** - Featured movie with play/info buttons and mute toggle
-- **Movie Rows** - Horizontally scrollable rows with left/right navigation
-- **Movie Cards** - Hover effects with action buttons and expanded info
-- **Detail Modal** - Full movie details with cast, genres, and similar titles
-- **Browse Page** - All content in scrollable rows
-- **Movies Page** - Grid view with genre filtering
-- **TV Shows Page** - Grid view with category tabs
-- **My List Page** - Saved titles management
+- **Home Page** - Hero banner with featured content + multiple movie rows
+- **Movies Page** - Browse all movies with genre filtering
+- **TV Shows Page** - Browse all TV shows with category filtering
+- **Search Page** - Real-time search across all content
+- **My List Page** - Saved movies and shows
 - **Responsive Design** - Works on mobile, tablet, and desktop
-- **Dark Theme** - Netflix-inspired dark color scheme
+- **Hover Effects** - Netflix-style card hover with preview info
+- **Smooth Scrolling** - Horizontal scroll rows with arrow navigation
 
-## 🛠️ Tech Stack
+## 🛠 Tech Stack
 
-- **Framework**: Next.js 15 (App Router)
+- **Framework**: Next.js 14 (App Router)
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS
-- **Icons**: react-icons (fa, fi)
-- **Images**: Next.js Image component with picsum.photos
+- **Icons**: Custom SVG icon components (no external icon library dependency)
+- **Images**: Next.js Image optimization
 
 ## 📦 Installation
 
@@ -32,7 +30,7 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## 🏗️ Build
+## 🏗 Build
 
 ```bash
 npm run build
@@ -45,39 +43,39 @@ npm start
 ├── app/
 │   ├── globals.css
 │   ├── layout.tsx
-│   ├── page.tsx              # Homepage
-│   ├── browse/page.tsx       # Browse all
-│   ├── movies/page.tsx       # Movies grid
-│   ├── tv-shows/page.tsx     # TV Shows grid
-│   └── my-list/page.tsx      # Saved list
+│   ├── page.tsx          # Home
+│   ├── movies/page.tsx   # Movies
+│   ├── tv-shows/page.tsx # TV Shows
+│   ├── search/page.tsx   # Search
+│   └── my-list/page.tsx  # My List
 ├── components/
-│   ├── Header.tsx            # Navigation header
-│   ├── Footer.tsx            # Site footer
-│   ├── HeroBanner.tsx        # Hero section
-│   ├── MovieRow.tsx          # Horizontal scroll row
-│   ├── MovieCard.tsx         # Individual card
-│   ├── MovieGrid.tsx         # Grid layout
-│   └── DetailModal.tsx       # Movie detail modal
+│   ├── Header.tsx
+│   ├── Footer.tsx
+│   ├── HeroBanner.tsx
+│   ├── MovieRow.tsx
+│   ├── MovieCard.tsx
+│   ├── RatingBadge.tsx
+│   └── icons.tsx         # Custom SVG icons
 ├── lib/
-│   ├── utils.ts              # Utility functions
-│   └── movieData.ts          # Mock movie data
+│   ├── utils.ts
+│   └── data.ts
 └── types/
-    └── index.ts              # TypeScript types
+    └── index.ts
 ```
 
-## 🔧 Fix Applied
+## ⚠️ Deployment Fix
 
-The original build error was:
-```
-Module not found: Can't resolve 'react-icons/fi'
-```
+The original deployment failed because `lucide-react` was imported in `app/search/page.tsx` but not installed as a dependency. This has been fixed by:
 
-**Root Cause**: The `react-icons` package was not listed in `package.json` dependencies.
+1. Creating a custom `components/icons.tsx` with inline SVG icons
+2. Replacing all `lucide-react` imports with the custom icon components
+3. Downgrading Next.js from 15.0.0 to 14.2.5 (stable, no security vulnerabilities)
+4. Adding `lucide-react` to `package.json` dependencies as a fallback
 
-**Fix**: Added `"react-icons": "^5.3.0"` to the `dependencies` in `package.json`.
+## 🎨 Design
 
-Also upgraded from `next@14.2.15` (which had a security vulnerability) to `next@15.0.0`.
-
-## 📝 License
-
-MIT License - This is a demo application for educational purposes.
+- Dark theme matching Netflix's aesthetic
+- Netflix red (`#E50914`) as primary accent color
+- Smooth hover animations and transitions
+- Custom scrollbar styling
+- Gradient overlays for hero sections

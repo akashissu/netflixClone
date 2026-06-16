@@ -22,6 +22,10 @@ body {
   color: white;
 }
 
+body {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
@@ -51,14 +55,13 @@ body {
   display: none;
 }
 
-/* Smooth transitions */
-.card-hover {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+/* Card hover effect */
+.movie-card {
+  transition: transform 0.3s ease, z-index 0s;
 }
 
-.card-hover:hover {
-  transform: scale(1.05);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+.movie-card:hover {
+  transform: scale(1.08);
   z-index: 10;
 }
 
@@ -76,14 +79,9 @@ body {
   background: linear-gradient(
     to top,
     rgba(20, 20, 20, 1) 0%,
-    rgba(20, 20, 20, 0) 100%
+    rgba(20, 20, 20, 0.5) 50%,
+    transparent 100%
   );
-}
-
-/* Modal backdrop */
-.modal-backdrop {
-  backdrop-filter: blur(4px);
-  background-color: rgba(0, 0, 0, 0.75);
 }
 
 /* Line clamp utilities */

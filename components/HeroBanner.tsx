@@ -2,10 +2,9 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { FaPlay, FaInfoCircle } from 'react-icons/fa';
-import { FiVolume2, FiVolumeX } from 'react-icons/fi';
+import { Play, Info, Plus, Volume2 } from './icons';
 import { Movie } from '@/types';
-import DetailModal from './DetailModal';
+import { cn } from '@/lib/utils';
 
 interface HeroBannerProps {
   movie: Movie;
@@ -13,90 +12,89 @@ interface HeroBannerProps {
 
 export default function HeroBanner({ movie }: HeroBannerProps) {
   const [muted, setMuted] = useState(true);
-  const [showModal, setShowModal] = useState(false);
+  const [added, setAdded] = useState(false);
 
   return (
-    <>
-      <div className="relative w-full h-[85vh] min-h-[500px] overflow-hidden">
-        {/* Background Image */}
-        <div className="absolute inset-0">
-          <Image
-            src={movie.backdropUrl}
-            alt={movie.title}
-            fill
-            className="object-cover object-top"
-            priority
-            sizes="100vw"
-          />
-        </div>
+    <div className="relative w-full h-[56vw] min-h-[400px] max-h-[800px] overflow-hidden">
+      {/* Background Image */}
+      <div className="absolute inset-0">
+        <Image
+          src={movie.backdropUrl}
+          alt={movie.title}
+          fill
+          className="object-cover object-center"
+          priority
+          sizes="100vw"
+        />
+      </div>
 
-        {/* Gradients */}
-        <div className="hero-gradient absolute inset-0" />
-        <div className="hero-bottom-gradient absolute bottom-0 left-0 right-0 h-48" />
+      {/* Gradients */}
+      <div className="absolute inset-0 hero-gradient" />
+      <div className="absolute bottom-0 left-0 right-0 h-48 hero-bottom-gradient" />
 
-        {/* Content */}
-        <div className="absolute bottom-32 left-4 md:left-12 max-w-lg animate-fade-in">
+      {/* Content */}
+      <div className="absolute inset-0 flex flex-col justify-end pb-32 px-4 md:px-8 lg:px-16">
+        <div className="max-w-xl animate-fade-in">
           {/* Badge */}
-          <div className="flex items-center gap-2 mb-4">
-            <span className="bg-netflix-red text-white text-xs font-bold px-2 py-1 rounded">
-              {movie.badge || 'TOP 10'}
+          <div className="flex items-center gap-2 mb-3">
+            <span className="bg-netflix-red text-white text-xs font-bold px-2 py-0.5 rounded">
+              {movie.badge || 'TOP PICK'}
             </span>
-            <span className="text-netflix-lightgray text-sm">#1 in Movies Today</span>
+            <span className="text-gray-300 text-sm">{movie.year}</span>
           </div>
 
           {/* Title */}
-          <h1 className="text-4xl md:text-6xl font-black text-white mb-4 leading-tight">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-3 leading-tight">
             {movie.title}
           </h1>
 
           {/* Meta */}
           <div className="flex items-center gap-3 mb-4">
             <span className="text-green-400 font-semibold text-sm">{movie.matchScore}% Match</span>
-            <span className="text-netflix-lightgray text-sm">{movie.year}</span>
-            <span className="border border-netflix-lightgray text-netflix-lightgray text-xs px-1">
-              {movie.rating}
-            </span>
-            <span className="text-netflix-lightgray text-sm">{movie.duration}</span>
+            <span className="border border-gray-500 text-gray-300 text-xs px-1.5 py-0.5">{movie.rating}</span>
+            <span className="text-gray-300 text-sm">{movie.duration}</span>
+            <span className="border border-gray-500 text-gray-300 text-xs px-1.5 py-0.5">HD</span>
           </div>
 
           {/* Description */}
-          <p className="text-white text-sm md:text-base leading-relaxed mb-6 line-clamp-3">
+          <p className="text-gray-200 text-sm md:text-base line-clamp-3 mb-6 max-w-lg">
             {movie.description}
           </p>
 
           {/* Buttons */}
           <div className="flex items-center gap-3">
-            <button className="flex items-center gap-2 bg-white text-black font-bold px-6 py-3 rounded hover:bg-gray-200 transition-colors text-sm md:text-base">
-              <FaPlay size={16} />
+            <button className="flex items-center gap-2 bg-white text-black px-6 py-2.5 rounded font-bold text-sm md:text-base hover:bg-gray-200 transition-colors">
+              <Play size={20} />
               Play
             </button>
-            <button
-              onClick={() => setShowModal(true)}
-              className="flex items-center gap-2 bg-gray-600 bg-opacity-70 text-white font-semibold px-6 py-3 rounded hover:bg-opacity-50 transition-colors text-sm md:text-base"
-            >
-              <FaInfoCircle size={16} />
+
+            <button className="flex items-center gap-2 bg-gray-600/70 text-white px-6 py-2.5 rounded font-semibold text-sm md:text-base hover:bg-gray-500/70 transition-colors">
+              <Info size={20} />
               More Info
+            </button>
+
+            <button
+              onClick={() => setAdded(!added)}
+              className={cn(
+                'flex items-center justify-center w-10 h-10 rounded-full border-2 transition-colors',
+                added ? 'border-white bg-white/20' : 'border-gray-400 hover:border-white'
+              )}
+              aria-label="Add to My List"
+            >
+              <Plus size={18} className="text-white" />
             </button>
           </div>
         </div>
-
-        {/* Mute button */}
-        <button
-          onClick={() => setMuted(!muted)}
-          className="absolute bottom-32 right-4 md:right-12 border border-netflix-lightgray text-white p-2 rounded-full hover:border-white transition-colors"
-        >
-          {muted ? <FiVolumeX size={20} /> : <FiVolume2 size={20} />}
-        </button>
-
-        {/* Age rating badge */}
-        <div className="absolute bottom-32 right-16 md:right-24 border-l-4 border-netflix-lightgray bg-black bg-opacity-50 px-3 py-1">
-          <span className="text-netflix-lightgray text-sm">{movie.rating}</span>
-        </div>
       </div>
 
-      {showModal && (
-        <DetailModal movie={movie} onClose={() => setShowModal(false)} />
-      )}
-    </>
+      {/* Mute button */}
+      <button
+        onClick={() => setMuted(!muted)}
+        className="absolute bottom-32 right-4 md:right-8 lg:right-16 flex items-center justify-center w-10 h-10 rounded-full border border-gray-400 text-white hover:border-white transition-colors"
+        aria-label={muted ? 'Unmute' : 'Mute'}
+      >
+        <Volume2 size={18} />
+      </button>
+    </div>
   );
 }

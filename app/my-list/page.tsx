@@ -3,40 +3,44 @@
 import { useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import MovieGrid from '@/components/MovieGrid';
-import { getAllMovies } from '@/lib/movieData';
-import { Movie } from '@/types';
+import MovieCard from '@/components/MovieCard';
+import { getMyListMovies } from '@/lib/data';
 
 export default function MyListPage() {
-  const allMovies = getAllMovies();
-  // Simulate a saved list with first 6 movies
-  const [myList] = useState<Movie[]>(allMovies.slice(0, 6));
+  const [movies] = useState(getMyListMovies());
 
   return (
-    <main className="bg-netflix-black min-h-screen">
+    <>
       <Header />
-      <div className="pt-24 pb-20 px-4 md:px-12">
-        <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-white">My List</h1>
-          <p className="text-netflix-lightgray mt-2 text-lg">
-            {myList.length} {myList.length === 1 ? 'title' : 'titles'} saved to your list
-          </p>
-        </div>
+      <main className="min-h-screen bg-netflix-black pt-24 px-4 md:px-8 lg:px-16 pb-16">
+        <div className="max-w-7xl mx-auto">
+          <h1 className="text-3xl font-bold text-white mb-2">My List</h1>
+          <p className="text-gray-400 mb-8">Your saved movies and shows</p>
 
-        {myList.length > 0 ? (
-          <MovieGrid movies={myList} />
-        ) : (
-          <div className="flex flex-col items-center justify-center py-32 text-center">
-            <div className="text-6xl mb-6">📋</div>
-            <h2 className="text-2xl font-semibold text-white mb-3">Your list is empty</h2>
-            <p className="text-netflix-lightgray max-w-md">
-              Add movies and TV shows to your list by clicking the + button on any title.
-              Your saved content will appear here.
-            </p>
-          </div>
-        )}
-      </div>
+          {movies.length > 0 ? (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
+              {movies.map((movie) => (
+                <MovieCard key={movie.id} movie={movie} />
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-32 text-center">
+              <div className="text-6xl mb-4">📋</div>
+              <h2 className="text-2xl font-semibold text-white mb-2">Your list is empty</h2>
+              <p className="text-gray-400 max-w-md mb-6">
+                Add movies and shows to your list to watch them later. Click the + button on any title.
+              </p>
+              <a
+                href="/movies"
+                className="bg-white text-black px-6 py-3 rounded font-semibold hover:bg-gray-200 transition-colors"
+              >
+                Browse Movies
+              </a>
+            </div>
+          )}
+        </div>
+      </main>
       <Footer />
-    </main>
+    </>
   );
 }

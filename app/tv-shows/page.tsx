@@ -1,41 +1,44 @@
 import Header from '@/components/Header';
-import MovieGrid from '@/components/MovieGrid';
 import Footer from '@/components/Footer';
-import { getAllTVShows } from '@/lib/movieData';
+import MovieCard from '@/components/MovieCard';
+import { getAllTVShows } from '@/lib/data';
+
+export const metadata = {
+  title: 'TV Shows - StreamFlix',
+  description: 'Browse all TV shows on StreamFlix',
+};
+
+const CATEGORIES = ['All', 'Drama', 'Comedy', 'Crime', 'Fantasy', 'Reality', 'Documentary', 'Anime'];
 
 export default function TVShowsPage() {
   const shows = getAllTVShows();
 
   return (
-    <main className="bg-netflix-black min-h-screen">
+    <>
       <Header />
-      <div className="pt-24 pb-20 px-4 md:px-12">
-        <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-white">TV Shows</h1>
-          <p className="text-netflix-lightgray mt-2 text-lg">
-            Binge-watch the most talked-about series from around the world
-          </p>
-        </div>
+      <main className="min-h-screen bg-netflix-black pt-24 px-4 md:px-8 lg:px-16 pb-16">
+        <div className="max-w-7xl mx-auto">
+          <h1 className="text-3xl font-bold text-white mb-6">TV Shows</h1>
 
-        {/* Category tabs */}
-        <div className="flex gap-6 mb-8 border-b border-gray-700">
-          {['All Shows', 'Currently Airing', 'Completed', 'New Releases'].map((tab, i) => (
-            <button
-              key={tab}
-              className={`pb-3 text-sm font-medium transition-colors ${
-                i === 0
-                  ? 'text-white border-b-2 border-netflix-red'
-                  : 'text-netflix-lightgray hover:text-white'
-              }`}
-            >
-              {tab}
-            </button>
-          ))}
-        </div>
+          <div className="flex flex-wrap gap-2 mb-8">
+            {CATEGORIES.map((cat) => (
+              <button
+                key={cat}
+                className="px-4 py-2 rounded-full border border-gray-600 text-sm text-gray-300 hover:border-white hover:text-white transition-colors"
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
 
-        <MovieGrid movies={shows} />
-      </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
+            {shows.map((show) => (
+              <MovieCard key={show.id} movie={show} />
+            ))}
+          </div>
+        </div>
+      </main>
       <Footer />
-    </main>
+    </>
   );
 }
