@@ -1,45 +1,111 @@
 'use client';
 
-import { useRef } from 'react';
-import { FiSearch, FiX } from 'react-icons/fi';
+import { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 
 interface SearchBarProps {
-  value: string;
-  onChange: (value: string) => void;
+  onSearch?: (query: string) => void;
+  initialValue?: string;
   placeholder?: string;
+  autoFocus?: boolean;
 }
 
-export default function SearchBar({ value, onChange, placeholder = 'Search...' }: SearchBarProps) {
+export function SearchBar({
+  onSearch,
+  initialValue = '',
+  placeholder = 'Titles, people, genres',
+  autoFocus = true,
+}: SearchBarProps) {
+  const [value, setValue] = useState(initialValue);
+  const [focused, setFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const debounceRef = useRef<NodeJS.Timeout>();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (autoFocus && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [autoFocus]);
+
+  useEffect(() => {
+    setValue(initialValue);
+  }, [initialValue]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    setValue(newValue);
+
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      if (onSearch) {
+        onSearch(newValue);
+      }
+    }, 400);
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    if (onSearch) {
+      onSearch(value);
+    } else {
+      router.push(`/search?q=${encodeURIComponent(value)}`);
+    }
+  };
+
+  const handleClear = () => {
+    setValue('');
+    if (onSearch) onSearch('');
+    inputRef.current?.focus();
+  };
 
   return (
-    <div className="relative flex items-center">
-      <FiSearch
-        className="absolute left-4 text-netflix-gray"
-        size={20}
-      />
-      <input
-        ref={inputRef}
-        type="text"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        className="w-full bg-netflix-dark border border-gray-700 text-white placeholder-netflix-gray rounded-lg pl-12 pr-12 py-3 text-base focus:outline-none focus:border-white transition-colors"
-        autoFocus
-        aria-label="Search"
-      />
-      {value && (
-        <button
-          onClick={() => {
-            onChange('');
-            inputRef.current?.focus();
-          }}
-          className="absolute right-4 text-netflix-gray hover:text-white transition-colors"
-          aria-label="Clear search"
+    <form onSubmit={handleSubmit} className="w-full max-w-2xl">
+      <div
+        className={`flex items-center gap-3 bg-black border rounded px-4 py-3 transition-all duration-300 ${
+          focused ? 'border-white' : 'border-gray-600'
+        }`}
+      >
+        <svg
+          className="w-5 h-5 text-gray-400 flex-shrink-0"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
         >
-          <FiX size={20} />
-        </button>
-      )}
-    </div>
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+          />
+        </svg>
+
+        <input
+          ref={inputRef}
+          type="text"
+          value={value}
+          onChange={handleChange}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
+          placeholder={placeholder}
+          className="flex-1 bg-transparent text-white placeholder-gray-500 outline-none text-base"
+          aria-label="Search"
+        />
+
+        {value && (
+          <button
+            type="button"
+            onClick={handleClear}
+            className="text-gray-400 hover:text-white transition-colors flex-shrink-0"
+            aria-label="Clear search"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        )}
+      </div>
+    </form>
   );
 }

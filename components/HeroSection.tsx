@@ -2,99 +2,105 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { FiPlay, FiInfo } from 'react-icons/fi';
-import { Movie } from '@/types';
-import { getImageUrl } from '@/lib/tmdb';
+import Link from 'next/link';
+import { DetailModal } from '@/components/DetailModal';
+import { getImageUrl, truncateText } from '@/lib/utils';
+import type { TMDBTitle } from '@/types';
 
 interface HeroSectionProps {
-  featured: Movie | null;
+  title: TMDBTitle;
 }
 
-export default function HeroSection({ featured }: HeroSectionProps) {
-  const router = useRouter();
-  const [imgError, setImgError] = useState(false);
+export function HeroSection({ title }: HeroSectionProps) {
+  const [showModal, setShowModal] = useState(false);
 
-  if (!featured) {
-    return (
-      <div className="relative w-full h-[56.25vw] max-h-[80vh] min-h-[400px] bg-netflix-dark flex items-center justify-center">
-        <p className="text-netflix-lightgray">No featured content available</p>
-      </div>
-    );
-  }
-
-  const backdropUrl = featured.backdrop_path
-    ? getImageUrl(featured.backdrop_path, 'original')
-    : null;
-
-  const title = featured.title || featured.name || 'Unknown Title';
-  const overview = featured.overview || '';
-  const mediaType = featured.media_type || 'movie';
+  const backdropUrl = getImageUrl(title.backdrop_path, 'original');
+  const displayTitle = title.title || title.name || 'Unknown Title';
+  const overview = truncateText(title.overview || '', 200);
+  const mediaType = title.media_type || 'movie';
 
   return (
-    <div className="relative w-full h-[56.25vw] max-h-[85vh] min-h-[400px] overflow-hidden">
-      {/* Backdrop Image */}
-      {backdropUrl && !imgError ? (
-        <Image
-          src={backdropUrl}
-          alt={title}
-          fill
-          priority
-          className="object-cover object-center"
-          onError={() => setImgError(true)}
-          sizes="100vw"
-        />
-      ) : (
-        <div className="absolute inset-0 bg-gradient-to-br from-gray-900 to-netflix-black" />
-      )}
+    <>
+      <div className="relative w-full h-[85vh] min-h-[500px] overflow-hidden">
+        {/* Background image */}
+        {backdropUrl ? (
+          <Image
+            src={backdropUrl}
+            alt={displayTitle}
+            fill
+            priority
+            className="object-cover object-center"
+            sizes="100vw"
+          />
+        ) : (
+          <div className="absolute inset-0 bg-gradient-to-br from-gray-900 to-gray-700" />
+        )}
 
-      {/* Gradient Overlays */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent" />
-      <div className="absolute inset-0 bg-gradient-to-t from-netflix-black via-transparent to-transparent" />
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-netflix-black to-transparent" />
+        {/* Gradient overlays */}
+        <div className="absolute inset-0 hero-gradient" />
+        <div className="absolute bottom-0 left-0 right-0 h-48 hero-bottom-gradient" />
 
-      {/* Content */}
-      <div className="absolute bottom-0 left-0 right-0 px-4 md:px-8 lg:px-16 pb-32 md:pb-40">
-        <div className="max-w-2xl">
+        {/* Content */}
+        <div className="absolute inset-0 flex flex-col justify-end pb-32 px-8 md:px-16 max-w-3xl">
           {/* Title */}
-          <h1 className="text-3xl md:text-5xl lg:text-6xl font-black text-white mb-4 leading-tight drop-shadow-lg">
-            {title}
+          <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 drop-shadow-lg animate-fade-in">
+            {displayTitle}
           </h1>
 
+          {/* Metadata */}
+          <div className="flex items-center gap-3 mb-4 text-sm">
+            {title.vote_average && (
+              <span className="text-green-400 font-semibold">
+                {Math.round(title.vote_average * 10)}% Match
+              </span>
+            )}
+            {title.release_date && (
+              <span className="text-gray-300">{new Date(title.release_date).getFullYear()}</span>
+            )}
+            {title.first_air_date && (
+              <span className="text-gray-300">{new Date(title.first_air_date).getFullYear()}</span>
+            )}
+            <span className="maturity-badge">16+</span>
+            {title.original_language && (
+              <span className="text-gray-300 uppercase">{title.original_language}</span>
+            )}
+          </div>
+
           {/* Overview */}
-          <p className="text-sm md:text-base lg:text-lg text-white/90 mb-6 line-clamp-3 drop-shadow max-w-xl">
-            {overview}
-          </p>
+          {overview && (
+            <p className="text-gray-200 text-sm md:text-base leading-relaxed mb-6 max-w-xl drop-shadow">
+              {overview}
+            </p>
+          )}
 
-          {/* Buttons */}
+          {/* Action buttons */}
           <div className="flex items-center gap-3">
-            <button
-              onClick={() => router.push(`/title/${featured.id}?type=${mediaType}`)}
-              className="flex items-center gap-2 bg-white text-black px-6 md:px-8 py-2 md:py-3 rounded font-bold text-sm md:text-base hover:bg-gray-200 transition-colors"
+            <Link
+              href={`/title/${title.id}?type=${mediaType}`}
+              className="flex items-center gap-2 bg-white text-black font-semibold px-6 py-2.5 rounded hover:bg-gray-200 transition-colors duration-200"
             >
-              <FiPlay size={20} fill="black" />
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z" />
+              </svg>
               Play
-            </button>
+            </Link>
 
             <button
-              onClick={() => router.push(`/title/${featured.id}?type=${mediaType}`)}
-              className="flex items-center gap-2 bg-gray-500/70 text-white px-6 md:px-8 py-2 md:py-3 rounded font-bold text-sm md:text-base hover:bg-gray-500/90 transition-colors backdrop-blur-sm"
+              onClick={() => setShowModal(true)}
+              className="flex items-center gap-2 bg-gray-600 bg-opacity-70 hover:bg-opacity-90 text-white font-semibold px-6 py-2.5 rounded transition-colors duration-200"
             >
-              <FiInfo size={20} />
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
               More Info
             </button>
           </div>
         </div>
       </div>
 
-      {/* Rating badge */}
-      {featured.vote_average && featured.vote_average > 0 && (
-        <div className="absolute top-1/3 right-4 md:right-8 lg:right-16 flex items-center gap-2 border-l-4 border-netflix-lightgray pl-3">
-          <span className="text-white font-semibold text-sm md:text-base">
-            {Math.round(featured.vote_average * 10)}% Match
-          </span>
-        </div>
+      {showModal && (
+        <DetailModal title={title} onClose={() => setShowModal(false)} isModal />
       )}
-    </div>
+    </>
   );
 }

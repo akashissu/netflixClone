@@ -2,99 +2,96 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { Play, Plus, ThumbsUp, Info } from './icons';
-import { Movie } from '@/types';
-import { cn } from '@/lib/utils';
+import Link from 'next/link';
+import { DetailModal } from '@/components/DetailModal';
+import { getImageUrl } from '@/lib/utils';
+import type { TMDBTitle } from '@/types';
 
 interface MovieCardProps {
-  movie: Movie;
+  title: TMDBTitle;
+  variant?: 'row' | 'grid';
 }
 
-export default function MovieCard({ movie }: MovieCardProps) {
-  const [isHovered, setIsHovered] = useState(false);
-  const [added, setAdded] = useState(false);
+export function MovieCard({ title, variant = 'row' }: MovieCardProps) {
+  const [showModal, setShowModal] = useState(false);
+  const [imageError, setImageError] = useState(false);
+
+  const displayTitle = title.title || title.name || 'Unknown';
+  const mediaType = title.media_type || 'movie';
+  const imageUrl = getImageUrl(
+    variant === 'grid' ? title.poster_path : (title.backdrop_path || title.poster_path),
+    variant === 'grid' ? 'w342' : 'w500'
+  );
+
+  const aspectClass = variant === 'grid' ? 'aspect-[2/3]' : 'aspect-video';
 
   return (
-    <div
-      className={cn(
-        'relative rounded overflow-hidden cursor-pointer transition-all duration-300',
-        isHovered ? 'scale-110 z-20 shadow-2xl' : 'scale-100 z-0'
-      )}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      {/* Thumbnail */}
-      <div className="relative aspect-video bg-gray-800">
-        <Image
-          src={movie.thumbnailUrl}
-          alt={movie.title}
-          fill
-          className="object-cover"
-          sizes="(max-width: 768px) 144px, (max-width: 1024px) 176px, 208px"
-        />
-        {!isHovered && (
-          <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-        )}
-      </div>
-
-      {/* Hover Overlay */}
-      {isHovered && (
-        <div className="absolute inset-0 bg-netflix-dark rounded overflow-hidden shadow-2xl" style={{ top: '100%', left: '-10%', right: '-10%', width: '120%' }}>
-          {/* Preview Image */}
-          <div className="relative aspect-video bg-gray-800">
-            <Image
-              src={movie.thumbnailUrl}
-              alt={movie.title}
-              fill
-              className="object-cover"
-              sizes="250px"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-netflix-dark/80 to-transparent" />
+    <>
+      <div
+        className={`relative ${aspectClass} rounded-md overflow-hidden cursor-pointer movie-card group`}
+        onClick={() => setShowModal(true)}
+      >
+        {imageUrl && !imageError ? (
+          <Image
+            src={imageUrl}
+            alt={displayTitle}
+            fill
+            className="object-cover"
+            sizes="(max-width: 768px) 144px, (max-width: 1024px) 176px, 208px"
+            onError={() => setImageError(true)}
+          />
+        ) : (
+          <div className="absolute inset-0 bg-netflix-dark-gray flex items-center justify-center">
+            <div className="text-center px-2">
+              <div className="text-3xl mb-2">🎬</div>
+              <p className="text-gray-400 text-xs text-center line-clamp-2">{displayTitle}</p>
+            </div>
           </div>
+        )}
 
-          {/* Info */}
-          <div className="p-3">
-            {/* Action buttons */}
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center gap-2">
-                <button className="w-8 h-8 bg-white rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors">
-                  <Play size={14} className="text-black ml-0.5" />
-                </button>
-                <button
-                  onClick={(e) => { e.stopPropagation(); setAdded(!added); }}
-                  className="w-8 h-8 border-2 border-gray-400 rounded-full flex items-center justify-center hover:border-white transition-colors"
-                >
-                  <Plus size={14} className="text-white" />
-                </button>
-                <button className="w-8 h-8 border-2 border-gray-400 rounded-full flex items-center justify-center hover:border-white transition-colors">
-                  <ThumbsUp size={14} className="text-white" />
-                </button>
-              </div>
-              <button className="w-8 h-8 border-2 border-gray-400 rounded-full flex items-center justify-center hover:border-white transition-colors">
-                <Info size={14} className="text-white" />
+        {/* Hover overlay */}
+        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300" />
+
+        {/* Hover info */}
+        <div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black to-transparent translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+          <p className="text-white text-xs font-semibold truncate">{displayTitle}</p>
+          <div className="flex items-center gap-2 mt-1">
+            {title.vote_average && (
+              <span className="text-green-400 text-xs">
+                {Math.round(title.vote_average * 10)}%
+              </span>
+            )}
+            <div className="flex gap-1">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  // Add to list logic handled in modal
+                }}
+                className="w-6 h-6 rounded-full border border-gray-400 flex items-center justify-center hover:border-white transition-colors"
+                aria-label="Add to list"
+              >
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
               </button>
-            </div>
-
-            {/* Match & Rating */}
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-green-400 text-xs font-semibold">{movie.matchScore}% Match</span>
-              <span className="border border-gray-500 text-gray-300 text-xs px-1">{movie.rating}</span>
-            </div>
-
-            {/* Title */}
-            <p className="text-white text-xs font-semibold truncate mb-1">{movie.title}</p>
-
-            {/* Genres */}
-            <div className="flex items-center gap-1 flex-wrap">
-              {movie.genres.slice(0, 3).map((genre, i) => (
-                <span key={genre} className="text-gray-400 text-xs">
-                  {genre}{i < Math.min(movie.genres.length, 3) - 1 ? ' •' : ''}
-                </span>
-              ))}
+              <Link
+                href={`/title/${title.id}?type=${mediaType}`}
+                onClick={(e) => e.stopPropagation()}
+                className="w-6 h-6 rounded-full border border-gray-400 flex items-center justify-center hover:border-white transition-colors"
+                aria-label="More info"
+              >
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </Link>
             </div>
           </div>
         </div>
+      </div>
+
+      {showModal && (
+        <DetailModal title={title} onClose={() => setShowModal(false)} isModal />
       )}
-    </div>
+    </>
   );
 }

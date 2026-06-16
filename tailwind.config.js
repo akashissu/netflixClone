@@ -10,14 +10,16 @@ module.exports = {
       colors: {
         netflix: {
           red: '#E50914',
+          'red-dark': '#B20710',
           black: '#141414',
-          dark: '#181818',
-          gray: '#808080',
-          lightgray: '#b3b3b3',
+          'dark-gray': '#181818',
+          'mid-gray': '#2F2F2F',
+          'light-gray': '#808080',
+          white: '#FFFFFF',
         },
       },
       fontFamily: {
-        sans: ['Netflix Sans', 'Helvetica Neue', 'Segoe UI', 'Roboto', 'Ubuntu', 'sans-serif'],
+        netflix: ['Netflix Sans', 'Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif'],
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
@@ -26,7 +28,7 @@ module.exports = {
       animation: {
         'fade-in': 'fadeIn 0.5s ease-in-out',
         'slide-up': 'slideUp 0.3s ease-out',
-        'slide-in': 'slideIn 0.3s ease-out',
+        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
       },
       keyframes: {
         fadeIn: {
@@ -36,10 +38,6 @@ module.exports = {
         slideUp: {
           '0%': { transform: 'translateY(20px)', opacity: '0' },
           '100%': { transform: 'translateY(0)', opacity: '1' },
-        },
-        slideIn: {
-          '0%': { transform: 'translateX(-20px)', opacity: '0' },
-          '100%': { transform: 'translateX(0)', opacity: '1' },
         },
       },
     },

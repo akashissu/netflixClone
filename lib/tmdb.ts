@@ -1,162 +1,143 @@
-import { Movie, MovieDetails, Video } from '@/types';
+import type { TMDBTitle, TMDBResponse } from '@/types';
 import seedData from '@/data/seed.json';
 
 const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
-const TMDB_IMAGE_BASE = 'https://image.tmdb.org/t/p';
-const API_KEY = process.env.NEXT_PUBLIC_TMDB_API_KEY;
+const API_KEY = process.env.NEXT_PUBLIC_TMDB_API_KEY || process.env.TMDB_API_KEY || '';
 
-export function getImageUrl(path: string, size: string = 'w500'): string {
-  if (!path) return '';
-  return `${TMDB_IMAGE_BASE}/${size}${path}`;
-}
+const hasApiKey = () => !!API_KEY && API_KEY !== 'your_tmdb_api_key_here';
 
-async function tmdbFetch(endpoint: string): Promise<unknown> {
-  if (!API_KEY) {
-    throw new Error('No API key');
+async function fetchTMDB<T>(endpoint: string, params: Record<string, string> = {}): Promise<T> {
+  if (!hasApiKey()) {
+    throw new Error('No TMDB API key');
   }
 
-  const url = `${TMDB_BASE_URL}${endpoint}${endpoint.includes('?') ? '&' : '?'}api_key=${API_KEY}`;
+  const url = new URL(`${TMDB_BASE_URL}${endpoint}`);
+  url.searchParams.set('api_key', API_KEY);
+  url.searchParams.set('language', 'en-US');
+  Object.entries(params).forEach(([key, value]) => url.searchParams.set(key, value));
 
-  const response = await fetch(url, {
+  const response = await fetch(url.toString(), {
     next: { revalidate: 3600 },
   });
 
   if (!response.ok) {
-    throw new Error(`TMDB API error: ${response.status}`);
+    throw new Error(`TMDB API error: ${response.status} ${response.statusText}`);
   }
 
   return response.json();
 }
 
-export async function fetchTrending(): Promise<Movie[]> {
-  try {
-    const data = await tmdbFetch('/trending/all/week') as { results: Movie[] };
-    return data.results?.slice(0, 20) || [];
-  } catch {
-    return seedData.trending as Movie[];
-  }
-}
-
-export async function fetchTopRated(): Promise<Movie[]> {
-  try {
-    const data = await tmdbFetch('/movie/top_rated') as { results: Movie[] };
-    return (data.results?.slice(0, 20) || []).map((m) => ({ ...m, media_type: 'movie' }));
-  } catch {
-    return seedData.topRated as Movie[];
-  }
-}
-
-export async function fetchByGenre(genreId: number): Promise<Movie[]> {
-  try {
-    const data = await tmdbFetch(`/discover/movie?with_genres=${genreId}&sort_by=popularity.desc`) as { results: Movie[] };
-    return (data.results?.slice(0, 20) || []).map((m) => ({ ...m, media_type: 'movie' }));
-  } catch {
-    return seedData.action as Movie[];
-  }
-}
-
-export async function fetchTVShows(): Promise<Movie[]> {
-  try {
-    const data = await tmdbFetch('/tv/popular') as { results: Movie[] };
-    return (data.results?.slice(0, 20) || []).map((m) => ({ ...m, media_type: 'tv' }));
-  } catch {
-    return seedData.tvShows as Movie[];
-  }
-}
-
-export async function searchTitles(query: string): Promise<Movie[]> {
-  try {
-    const data = await tmdbFetch(`/search/multi?query=${encodeURIComponent(query)}&include_adult=false`) as { results: Movie[] };
-    return data.results?.filter((r) => r.media_type !== 'person').slice(0, 30) || [];
-  } catch {
-    const allItems = [
-      ...seedData.trending,
-      ...seedData.topRated,
-      ...seedData.action,
-      ...seedData.tvShows,
-    ] as Movie[];
-    const lowerQuery = query.toLowerCase();
-    return allItems.filter(
-      (item) =>
-        (item.title || item.name || '').toLowerCase().includes(lowerQuery) ||
-        (item.overview || '').toLowerCase().includes(lowerQuery)
-    );
-  }
-}
-
-export async function fetchMovieDetails(id: number, mediaType: string = 'movie'): Promise<MovieDetails> {
-  try {
-    const data = await tmdbFetch(`/${mediaType}/${id}?append_to_response=credits,videos`) as MovieDetails;
-    return data;
-  } catch {
-    const allItems = [
-      ...seedData.trending,
-      ...seedData.topRated,
-      ...seedData.action,
-      ...seedData.tvShows,
-    ] as Movie[];
-    const found = allItems.find((item) => item.id === id);
-    if (found) {
-      return {
-        ...found,
-        genres: (found.genre_ids || []).map((gid) => ({
-          id: gid,
-          name: genreIdToName(gid),
-        })),
-        runtime: 120,
-        status: 'Released',
-        credits: { cast: [], crew: [] },
-      } as MovieDetails;
-    }
-    throw new Error('Not found');
-  }
-}
-
-export async function fetchMovieVideos(id: number, mediaType: string = 'movie'): Promise<Video[]> {
-  try {
-    const data = await tmdbFetch(`/${mediaType}/${id}/videos`) as { results: Video[] };
-    return data.results || [];
-  } catch {
-    return [];
-  }
-}
-
-export function getFeaturedTitle(items: Movie[]): Movie | null {
-  if (!items || items.length === 0) return null;
-  const withBackdrop = items.filter((item) => item.backdrop_path);
-  if (withBackdrop.length === 0) return items[0];
-  return withBackdrop[Math.floor(Math.random() * Math.min(withBackdrop.length, 5))];
-}
-
-function genreIdToName(id: number): string {
-  const genres: Record<number, string> = {
-    28: 'Action',
-    12: 'Adventure',
-    16: 'Animation',
-    35: 'Comedy',
-    80: 'Crime',
-    99: 'Documentary',
-    18: 'Drama',
-    10751: 'Family',
-    14: 'Fantasy',
-    36: 'History',
-    27: 'Horror',
-    10402: 'Music',
-    9648: 'Mystery',
-    10749: 'Romance',
-    878: 'Science Fiction',
-    10770: 'TV Movie',
-    53: 'Thriller',
-    10752: 'War',
-    37: 'Western',
-    10759: 'Action & Adventure',
-    10762: 'Kids',
-    10763: 'News',
-    10764: 'Reality',
-    10765: 'Sci-Fi & Fantasy',
-    10766: 'Soap',
-    10767: 'Talk',
-    10768: 'War & Politics',
+function normalizeSeedItem(item: Record<string, unknown>): TMDBTitle {
+  return {
+    id: item.id as number,
+    title: item.title as string | undefined,
+    name: item.name as string | undefined,
+    overview: item.overview as string,
+    poster_path: item.poster_path as string | null,
+    backdrop_path: item.backdrop_path as string | null,
+    vote_average: item.vote_average as number,
+    vote_count: item.vote_count as number | undefined,
+    release_date: item.release_date as string | undefined,
+    first_air_date: item.first_air_date as string | undefined,
+    media_type: item.media_type as string | undefined,
+    genre_ids: item.genre_ids as number[] | undefined,
+    original_language: item.original_language as string | undefined,
+    popularity: item.popularity as number | undefined,
   };
-  return genres[id] || 'Unknown';
+}
+
+export async function getTrending(): Promise<TMDBTitle[]> {
+  try {
+    const data = await fetchTMDB<TMDBResponse>('/trending/all/week');
+    return data.results.slice(0, 20);
+  } catch {
+    return (seedData.trending as Record<string, unknown>[]).map(normalizeSeedItem);
+  }
+}
+
+export async function getTopRated(): Promise<TMDBTitle[]> {
+  try {
+    const data = await fetchTMDB<TMDBResponse>('/movie/top_rated');
+    return data.results.slice(0, 20);
+  } catch {
+    return (seedData.topRated as Record<string, unknown>[]).map(normalizeSeedItem);
+  }
+}
+
+export async function getByGenre(genreId: number): Promise<TMDBTitle[]> {
+  try {
+    const data = await fetchTMDB<TMDBResponse>('/discover/movie', {
+      with_genres: genreId.toString(),
+      sort_by: 'popularity.desc',
+    });
+    return data.results.slice(0, 20);
+  } catch {
+    return (seedData.action as Record<string, unknown>[]).map(normalizeSeedItem);
+  }
+}
+
+export async function getTVShows(): Promise<TMDBTitle[]> {
+  try {
+    const data = await fetchTMDB<TMDBResponse>('/tv/popular');
+    return data.results.slice(0, 20).map((item) => ({ ...item, media_type: 'tv' }));
+  } catch {
+    return (seedData.tvShows as Record<string, unknown>[]).map(normalizeSeedItem);
+  }
+}
+
+export async function searchTitles(query: string): Promise<TMDBTitle[]> {
+  if (!query.trim()) return [];
+  try {
+    const data = await fetchTMDB<TMDBResponse>('/search/multi', { query });
+    return data.results
+      .filter((item) => item.media_type !== 'person')
+      .slice(0, 20);
+  } catch {
+    const q = query.toLowerCase();
+    const allItems = [
+      ...(seedData.trending as Record<string, unknown>[]),
+      ...(seedData.topRated as Record<string, unknown>[]),
+      ...(seedData.action as Record<string, unknown>[]),
+      ...(seedData.tvShows as Record<string, unknown>[]),
+    ];
+    const seen = new Set<number>();
+    return allItems
+      .filter((item) => {
+        const t = ((item.title || item.name) as string || '').toLowerCase();
+        return t.includes(q);
+      })
+      .filter((item) => {
+        if (seen.has(item.id as number)) return false;
+        seen.add(item.id as number);
+        return true;
+      })
+      .map(normalizeSeedItem)
+      .slice(0, 20);
+  }
+}
+
+export async function getTitleDetails(id: string, mediaType: string = 'movie'): Promise<TMDBTitle> {
+  try {
+    const [details, similar] = await Promise.all([
+      fetchTMDB<TMDBTitle>(`/${mediaType}/${id}`),
+      fetchTMDB<TMDBResponse>(`/${mediaType}/${id}/similar`).catch(() => ({ results: [] })),
+    ]);
+    return {
+      ...details,
+      media_type: mediaType,
+      similar: similar.results?.slice(0, 6) || [],
+    };
+  } catch {
+    const allItems = [
+      ...(seedData.trending as Record<string, unknown>[]),
+      ...(seedData.topRated as Record<string, unknown>[]),
+      ...(seedData.action as Record<string, unknown>[]),
+      ...(seedData.tvShows as Record<string, unknown>[]),
+    ];
+    const found = allItems.find((item) => String(item.id) === String(id));
+    if (found) {
+      return normalizeSeedItem(found);
+    }
+    throw new Error(`Title ${id} not found`);
+  }
 }
