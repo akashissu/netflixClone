@@ -4,11 +4,13 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'picsum.photos',
+        hostname: 'image.tmdb.org',
+        port: '',
+        pathname: '/t/p/**',
       },
       {
         protocol: 'https',
-        hostname: 'images.unsplash.com',
+        hostname: 'via.placeholder.com',
       },
     ],
   },

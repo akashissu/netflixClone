@@ -1,36 +1,49 @@
-# Spotify Clone — Music Streaming UI
+# Netflix Clone — pap-396-feature Branch Fix
 
-A full-featured Spotify-style music streaming application built with Next.js 14 (App Router), TypeScript, and Tailwind CSS.
+This repository contains a Netflix Clone built with **Next.js 14 (App Router)**, **TypeScript**, and **Tailwind CSS**.
 
-## 🎵 Features
+## Fix: Export/Import Mismatch (PAP-396)
 
-- **Home Page** — Hero section, featured playlists, popular artists, new releases, trending tracks
-- **Browse Page** — Charts, new releases, genre categories
-- **Search Page** — Real-time search with results for tracks, artists, albums, and playlists
-- **Playlist Detail** — Full tracklist with play controls, recommended tracks
-- **Artist Profile** — Bio, top tracks, discography, related artists
+### Problem
 
-## 🧩 Components
+The Vercel build for the `pap-396-feature` branch was failing with:
 
-- **Sidebar** — Desktop navigation with library playlists
-- **PlayerBar** — Fixed bottom player with controls, progress bar, volume
-- **MobileNav** — Bottom navigation for mobile devices
-- **PlaylistCard** — Playlist grid card with hover play button
-- **TrackRow** — Track list row with play/pause, duration, album link
-- **ArtistCard** — Artist grid card with monthly listeners
-- **AlbumCard** — Album grid card with release year
-- **SearchBar** — Debounced search input with clear button
-- **Header** — Navigation arrows and user actions
-- **Footer** — Links, social icons, legal info
+```
+Attempted import error: 'Header' is not exported from '@/components/Header'
+Attempted import error: 'Footer' is not exported from '@/components/Footer'
+```
 
-## 🛠 Tech Stack
+**Root cause:** `components/Header.tsx` and `components/Footer.tsx` used `export default function` while the affected pages imported them as named imports (`{ Header }`, `{ Footer }`).
 
-- **Next.js 14** (App Router)
-- **TypeScript** — strict mode
-- **Tailwind CSS** — all styling
-- **React 18** — hooks throughout
+### Fix Applied (Option A — Named Exports Everywhere)
 
-## 🚀 Getting Started
+All components now use **named exports** (`export function ComponentName`) for consistency:
+
+| File | Change |
+|------|--------|
+| `components/Header.tsx` | `export default function Header` → `export function Header` |
+| `components/Footer.tsx` | `export default function Footer` → `export function Footer` |
+| `components/HeroBanner.tsx` | Uses `export function HeroBanner` ✓ |
+| `components/ContentRow.tsx` | Uses `export function ContentRow` ✓ |
+| `components/ContentGrid.tsx` | Uses `export function ContentGrid` ✓ |
+| `components/TitleCard.tsx` | Uses `export function TitleCard` ✓ |
+| `components/PageBanner.tsx` | Uses `export function PageBanner` ✓ |
+| `components/TitleDetail.tsx` | Uses `export function TitleDetail` ✓ |
+
+All pages now correctly use named imports:
+```tsx
+import { Header } from '@/components/Header';
+import { Footer } from '@/components/Footer';
+```
+
+### Affected Pages Fixed
+
+- `app/movies/page.tsx`
+- `app/my-list/page.tsx`
+- `app/title/[id]/page.tsx`
+- `app/tv-shows/page.tsx`
+
+## Getting Started
 
 ```bash
 npm install
@@ -39,46 +52,54 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 ├── app/
 │   ├── globals.css
-│   ├── layout.tsx
-│   ├── page.tsx              # Home
-│   ├── browse/page.tsx       # Browse
-│   ├── search/page.tsx       # Search
-│   ├── playlist/[id]/page.tsx
-│   └── artist/[id]/page.tsx
+│   ├── layout.tsx          # Root layout with Header + Footer
+│   ├── page.tsx            # Homepage with hero banner + content rows
+│   ├── movies/
+│   │   └── page.tsx        # Movies browse page
+│   ├── tv-shows/
+│   │   └── page.tsx        # TV Shows browse page
+│   ├── my-list/
+│   │   └── page.tsx        # User's saved list
+│   ├── search/
+│   │   └── page.tsx        # Search page
+│   └── title/
+│       └── [id]/
+│           └── page.tsx    # Title detail page
 ├── components/
-│   ├── Sidebar.tsx
-│   ├── PlayerBar.tsx
-│   ├── MobileNav.tsx
-│   ├── PlaylistCard.tsx
-│   ├── TrackRow.tsx
-│   ├── ArtistCard.tsx
-│   ├── AlbumCard.tsx
-│   ├── SearchBar.tsx
-│   ├── Header.tsx
-│   └── Footer.tsx
+│   ├── Header.tsx          # Site header with navigation
+│   ├── Footer.tsx          # Site footer with links
+│   ├── HeroBanner.tsx      # Full-width hero section
+│   ├── ContentRow.tsx      # Horizontally scrollable row
+│   ├── ContentGrid.tsx     # Grid layout for titles
+│   ├── TitleCard.tsx       # Individual title card with hover
+│   ├── PageBanner.tsx      # Page header banner
+│   └── TitleDetail.tsx     # Full title detail view
 ├── lib/
-│   └── utils.ts              # Helpers + sample data
-├── types/
-│   └── index.ts              # All TypeScript types
-└── README.md
+│   ├── mockData.ts         # Mock movie/TV data
+│   └── utils.ts            # Utility functions
+└── types/
+    └── index.ts            # TypeScript type definitions
 ```
 
-## 🎨 Design
+## Tech Stack
 
-Faithfully recreates the Spotify dark theme:
-- Background: `#121212`
-- Cards: `#282828`
-- Accent: `#1DB954` (Spotify Green)
-- Text: `#FFFFFF` / `#B3B3B3`
+- **Framework:** Next.js 14 (App Router)
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS
+- **Images:** Next.js Image component
 
-## 📝 Notes
+## Commit
 
-- All data is static/mock — no real Spotify API calls
-- Images sourced from `picsum.photos` (placeholder)
-- Player controls are UI-only (no actual audio playback)
-- Fully responsive: mobile, tablet, desktop
+```
+fix(pap-396): resolve export-import mismatches
+
+- Change Header and Footer from default exports to named exports
+- Ensure all components use named exports consistently
+- Fix all affected pages to use correct named imports
+- Scan and verify no remaining export/import mismatches
+```
