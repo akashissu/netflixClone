@@ -1,47 +1,78 @@
-export interface Movie {
+export interface Track {
   id: string;
   title: string;
+  artist: string;
+  artistId: string;
+  album: string;
+  albumId: string;
+  duration: number;
+  coverUrl: string;
+  audioUrl?: string;
+  explicit?: boolean;
+  popularity?: number;
+}
+
+export interface Playlist {
+  id: string;
+  name: string;
   description: string;
-  genre: string;
-  year: number;
-  rating: string;
-  score: number;
-  duration: string;
-  thumbnail: string;
-  backdrop: string;
-  isTrending: boolean;
-  isNew: boolean;
-  type: 'movie' | 'tv';
+  coverUrl: string;
+  owner: string;
+  tracks: Track[];
+  followers?: number;
+  isPublic?: boolean;
 }
 
-export interface MovieRow {
+export interface Artist {
+  id: string;
+  name: string;
+  bio: string;
+  imageUrl: string;
+  genres: string[];
+  followers: number;
+  monthlyListeners: number;
+  topTracks: Track[];
+  albums: Album[];
+  verified?: boolean;
+}
+
+export interface Album {
   id: string;
   title: string;
-  movies: Movie[];
+  artist: string;
+  artistId: string;
+  coverUrl: string;
+  releaseYear: number;
+  tracks: Track[];
+  genre?: string;
 }
 
-export interface User {
+export interface Category {
   id: string;
   name: string;
-  email: string;
-  avatar?: string;
-  plan: 'basic' | 'standard' | 'premium';
-  myList: string[];
+  imageUrl: string;
+  color: string;
 }
 
-export interface Genre {
-  id: string;
-  name: string;
-  slug: string;
+export interface PlayerState {
+  currentTrack: Track | null;
+  isPlaying: boolean;
+  volume: number;
+  progress: number;
+  duration: number;
+  shuffle: boolean;
+  repeat: 'off' | 'all' | 'one';
 }
 
 export interface SearchResult {
-  movies: Movie[];
-  tvShows: Movie[];
-  total: number;
+  tracks: Track[];
+  artists: Artist[];
+  albums: Album[];
+  playlists: Playlist[];
 }
 
-export interface NavLink {
-  href: string;
+export interface NavItem {
   label: string;
+  href: string;
+  icon: string;
 }

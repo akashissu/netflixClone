@@ -1,55 +1,84 @@
-# Netflix Clone — Next.js 14 App Router
+# Spotify Clone — Music Streaming UI
 
-A production-ready Netflix clone built with Next.js 14 (App Router), TypeScript, and Tailwind CSS.
+A full-featured Spotify-style music streaming application built with Next.js 14 (App Router), TypeScript, and Tailwind CSS.
 
-## Fix: PAP-393 — Vercel Build Export/Import Mismatches
+## 🎵 Features
 
-This PR fixes the Vercel build failure caused by export/import mismatches introduced in PAP-392.
+- **Home Page** — Hero section, featured playlists, popular artists, new releases, trending tracks
+- **Browse Page** — Charts, new releases, genre categories
+- **Search Page** — Real-time search with results for tracks, artists, albums, and playlists
+- **Playlist Detail** — Full tracklist with play controls, recommended tracks
+- **Artist Profile** — Bio, top tracks, discography, related artists
 
-### Root Cause
+## 🧩 Components
 
-PAP-392 refactored `Footer` and `MovieCard` to named exports (`export function Footer()`, `export function MovieCard()`) while consumer pages still used default imports (`import Footer from ...`, `import MovieCard from ...`).
+- **Sidebar** — Desktop navigation with library playlists
+- **PlayerBar** — Fixed bottom player with controls, progress bar, volume
+- **MobileNav** — Bottom navigation for mobile devices
+- **PlaylistCard** — Playlist grid card with hover play button
+- **TrackRow** — Track list row with play/pause, duration, album link
+- **ArtistCard** — Artist grid card with monthly listeners
+- **AlbumCard** — Album grid card with release year
+- **SearchBar** — Debounced search input with clear button
+- **Header** — Navigation arrows and user actions
+- **Footer** — Links, social icons, legal info
 
-### Fix Applied
+## 🛠 Tech Stack
 
-All components now export **both** named and default exports for maximum compatibility:
+- **Next.js 14** (App Router)
+- **TypeScript** — strict mode
+- **Tailwind CSS** — all styling
+- **React 18** — hooks throughout
 
-```ts
-// Named export (primary)
-export function Footer() { ... }
-export function MovieCard() { ... }
-export function Header() { ... }
-export function MovieRow() { ... }
+## 🚀 Getting Started
 
-// Default export (re-export for legacy compatibility)
-export default Footer;
-export default MovieCard;
+```bash
+npm install
+npm run dev
 ```
 
-All consumer pages updated to use **named imports** consistently:
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-```ts
-import { Footer } from '@/components/Footer';
-import { MovieCard } from '@/components/MovieCard';
-import { Header } from '@/components/Header';
-import { MovieRow } from '@/components/MovieRow';
+## 📁 Project Structure
+
+```
+├── app/
+│   ├── globals.css
+│   ├── layout.tsx
+│   ├── page.tsx              # Home
+│   ├── browse/page.tsx       # Browse
+│   ├── search/page.tsx       # Search
+│   ├── playlist/[id]/page.tsx
+│   └── artist/[id]/page.tsx
+├── components/
+│   ├── Sidebar.tsx
+│   ├── PlayerBar.tsx
+│   ├── MobileNav.tsx
+│   ├── PlaylistCard.tsx
+│   ├── TrackRow.tsx
+│   ├── ArtistCard.tsx
+│   ├── AlbumCard.tsx
+│   ├── SearchBar.tsx
+│   ├── Header.tsx
+│   └── Footer.tsx
+├── lib/
+│   └── utils.ts              # Helpers + sample data
+├── types/
+│   └── index.ts              # All TypeScript types
+└── README.md
 ```
 
-## Routes
+## 🎨 Design
 
-| Route | Description |
-|-------|-------------|
-| `/` | Landing page with sign-up CTA |
-| `/browse` | Main browse page with hero banner and movie rows |
-| `/movies` | All movies grid with genre filter |
-| `/tv-shows` | All TV shows grid with genre filter |
-| `/search` | Search page |
-| `/title/[id]` | Individual title detail page |
-| `/my-list` | User's saved list |
+Faithfully recreates the Spotify dark theme:
+- Background: `#121212`
+- Cards: `#282828`
+- Accent: `#1DB954` (Spotify Green)
+- Text: `#FFFFFF` / `#B3B3B3`
 
-## Tech Stack
+## 📝 Notes
 
-- **Framework**: Next.js 14 (App Router)
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS
-- **Images**: Next.js Image component with picsum.photos
+- All data is static/mock — no real Spotify API calls
+- Images sourced from `picsum.photos` (placeholder)
+- Player controls are UI-only (no actual audio playback)
+- Fully responsive: mobile, tablet, desktop

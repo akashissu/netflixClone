@@ -3,9 +3,11 @@
 @tailwind utilities;
 
 :root {
-  --netflix-red: #E50914;
-  --netflix-black: #141414;
-  --netflix-dark-gray: #181818;
+  --spotify-green: #1DB954;
+  --spotify-black: #191414;
+  --spotify-darkgray: #121212;
+  --spotify-gray: #282828;
+  --spotify-lightgray: #B3B3B3;
 }
 
 * {
@@ -18,59 +20,50 @@ html,
 body {
   max-width: 100vw;
   overflow-x: hidden;
-  background-color: #141414;
-  color: #ffffff;
+  background-color: #121212;
+  color: #FFFFFF;
 }
 
-body {
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-}
-
-/* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #141414;
+  background: #121212;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #555;
-  border-radius: 3px;
+  background: #535353;
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #888;
+  background: #b3b3b3;
 }
 
-/* Movie row horizontal scroll */
-.movie-row-scroll {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
 }
 
-.movie-row-scroll::-webkit-scrollbar {
-  display: none;
+input[type='range']::-webkit-slider-runnable-track {
+  background: #535353;
+  height: 4px;
+  border-radius: 2px;
 }
 
-/* Card hover effect */
-.movie-card-hover {
-  transition: transform 0.3s ease, z-index 0s 0.3s;
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  margin-top: -4px;
+  background-color: #ffffff;
+  height: 12px;
+  width: 12px;
+  border-radius: 50%;
 }
 
-.movie-card-hover:hover {
-  transform: scale(1.08);
-  z-index: 10;
-  transition: transform 0.3s ease, z-index 0s;
-}
-
-/* Gradient overlays */
-.gradient-bottom {
-  background: linear-gradient(to top, #141414 0%, transparent 100%);
-}
-
-.gradient-top {
-  background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, transparent 100%);
+input[type='range']:focus::-webkit-slider-runnable-track {
+  background: #1DB954;
 }
