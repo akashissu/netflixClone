@@ -1,45 +1,48 @@
-import { fetchMovieDetails, fetchMovieVideos } from '@/lib/tmdb';
-import DetailModal from '@/components/DetailModal';
+import { getTitleDetails } from '@/lib/tmdb';
+import { DetailModal } from '@/components/DetailModal';
 import { notFound } from 'next/navigation';
+import type { Metadata } from 'next';
 
-interface PageProps {
+interface Props {
   params: { id: string };
   searchParams: { type?: string };
 }
 
-export default async function TitlePage({ params, searchParams }: PageProps) {
-  const mediaType = searchParams.type || 'movie';
-  const id = parseInt(params.id, 10);
-
-  if (isNaN(id)) {
-    notFound();
-  }
-
+export async function generateMetadata({ params, searchParams }: Props): Promise<Metadata> {
   try {
-    const [details, videos] = await Promise.all([
-      fetchMovieDetails(id, mediaType),
-      fetchMovieVideos(id, mediaType),
-    ]);
+    const mediaType = searchParams.type || 'movie';
+    const title = await getTitleDetails(params.id, mediaType);
+    return {
+      title: `${title.title || title.name} — Netflix Clone`,
+      description: title.overview,
+      openGraph: {
+        title: title.title || title.name || 'Title',
+        description: title.overview || '',
+        images: title.backdrop_path
+          ? [`https://image.tmdb.org/t/p/w1280${title.backdrop_path}`]
+          : [],
+      },
+    };
+  } catch {
+    return { title: 'Title — Netflix Clone' };
+  }
+}
 
-    if (!details) {
-      notFound();
-    }
+export default async function TitlePage({ params, searchParams }: Props) {
+  const mediaType = searchParams.type || 'movie';
 
-    const trailer = videos.find(
-      (v: { type: string; site: string }) => v.type === 'Trailer' && v.site === 'YouTube'
-    ) || videos.find(
-      (v: { type: string; site: string }) => v.site === 'YouTube'
-    ) || null;
-
-    return (
-      <DetailModal
-        details={details}
-        trailerKey={trailer?.key || null}
-        mediaType={mediaType}
-      />
-    );
-  } catch (error) {
-    console.error('Error fetching title details:', error);
+  let title;
+  try {
+    title = await getTitleDetails(params.id, mediaType);
+  } catch {
     notFound();
   }
+
+  if (!title) notFound();
+
+  return (
+    <div className="min-h-screen bg-netflix-black">
+      <DetailModal title={title} />
+    </div>
+  );
 }

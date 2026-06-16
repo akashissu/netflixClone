@@ -19,10 +19,7 @@ body {
   max-width: 100vw;
   overflow-x: hidden;
   background-color: #141414;
-  color: white;
-}
-
-body {
+  color: #ffffff;
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
@@ -61,17 +58,17 @@ body {
 }
 
 .movie-card:hover {
-  transform: scale(1.08);
+  transform: scale(1.05);
   z-index: 10;
 }
 
-/* Hero gradient */
+/* Gradient overlays */
 .hero-gradient {
   background: linear-gradient(
     to right,
     rgba(20, 20, 20, 0.9) 0%,
     rgba(20, 20, 20, 0.6) 50%,
-    rgba(20, 20, 20, 0.1) 100%
+    rgba(20, 20, 20, 0) 100%
   );
 }
 
@@ -80,21 +77,65 @@ body {
     to top,
     rgba(20, 20, 20, 1) 0%,
     rgba(20, 20, 20, 0.5) 50%,
-    transparent 100%
+    rgba(20, 20, 20, 0) 100%
   );
 }
 
-/* Line clamp utilities */
-.line-clamp-2 {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
+/* Modal backdrop */
+.modal-backdrop {
+  backdrop-filter: blur(4px);
+  background-color: rgba(0, 0, 0, 0.75);
+}
+
+/* Loading skeleton animation */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    #2f2f2f 25%,
+    #3f3f3f 50%,
+    #2f2f2f 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* Video player */
+.video-container {
+  position: relative;
+  padding-bottom: 56.25%;
+  height: 0;
   overflow: hidden;
 }
 
-.line-clamp-3 {
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+.video-container iframe,
+.video-container video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Netflix button styles */
+.btn-netflix {
+  @apply bg-netflix-red hover:bg-netflix-red-dark text-white font-semibold px-6 py-2 rounded transition-colors duration-200;
+}
+
+.btn-secondary {
+  @apply bg-gray-600 hover:bg-gray-500 text-white font-semibold px-6 py-2 rounded transition-colors duration-200;
+}
+
+/* Search input */
+.search-input {
+  @apply bg-black bg-opacity-80 border border-gray-600 text-white placeholder-gray-400 rounded px-4 py-2 focus:outline-none focus:border-white transition-all duration-300;
+}
+
+/* Maturity rating badge */
+.maturity-badge {
+  @apply border border-gray-400 text-gray-300 text-xs px-1.5 py-0.5 rounded;
 }
