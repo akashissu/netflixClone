@@ -1,83 +1,95 @@
 'use client';
 
-import { useState } from 'react';
-import { Search, X } from 'lucide-react';
-import { allMovies, tvShows } from '@/lib/data';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 import MovieCard from '@/components/MovieCard';
+import { searchMovies } from '@/lib/data';
 import { Movie } from '@/types';
+import { Search } from '@/components/icons';
 
-export default function SearchPage() {
-  const [query, setQuery] = useState('');
+function SearchContent() {
+  const searchParams = useSearchParams();
+  const query = searchParams.get('q') || '';
+  const [results, setResults] = useState<Movie[]>([]);
+  const [searchTerm, setSearchTerm] = useState(query);
 
-  const allContent: Movie[] = [...allMovies, ...tvShows];
-
-  const results = query.length > 1
-    ? allContent.filter(
-        (item) =>
-          item.title.toLowerCase().includes(query.toLowerCase()) ||
-          item.genre.some((g) => g.toLowerCase().includes(query.toLowerCase())) ||
-          item.description.toLowerCase().includes(query.toLowerCase())
-      )
-    : [];
-
-  const trending = allContent.slice(0, 12);
+  useEffect(() => {
+    if (searchTerm.trim()) {
+      const found = searchMovies(searchTerm);
+      setResults(found);
+    } else {
+      setResults([]);
+    }
+  }, [searchTerm]);
 
   return (
-    <div className="min-h-screen bg-netflix-black pt-24 pb-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Search Input */}
-        <div className="relative mb-10">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-          <input
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search movies, shows, genres..."
-            className="w-full bg-zinc-800 text-white placeholder-gray-500 pl-12 pr-12 py-4 rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-netflix-red border border-zinc-700 focus:border-transparent"
-            autoFocus
-          />
-          {query && (
-            <button
-              onClick={() => setQuery('')}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
-            >
-              <X className="w-5 h-5" />
-            </button>
-          )}
+    <div className="min-h-screen bg-netflix-black pt-24 px-4 md:px-8 lg:px-16">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex items-center gap-4 mb-8">
+          <div className="relative flex-1 max-w-xl">
+            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+              <Search size={20} />
+            </div>
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Search movies, shows, genres..."
+              className="w-full bg-gray-800 border border-gray-600 text-white pl-10 pr-4 py-3 rounded-md focus:outline-none focus:border-white transition-colors"
+              autoFocus
+            />
+          </div>
         </div>
 
-        {/* Results */}
-        {query.length > 1 ? (
-          <>
-            <h2 className="text-xl font-semibold text-white mb-6">
-              {results.length > 0
-                ? `${results.length} result${results.length !== 1 ? 's' : ''} for "${query}"`
-                : `No results for "${query}"`}
-            </h2>
-            {results.length > 0 ? (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-                {results.map((item) => (
-                  <MovieCard key={item.id} movie={item} />
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-20">
-                <Search className="w-16 h-16 text-gray-700 mx-auto mb-4" />
-                <p className="text-gray-500 text-lg">Try searching for a movie, show, or genre</p>
-              </div>
-            )}
-          </>
+        {searchTerm && (
+          <p className="text-gray-400 mb-6">
+            {results.length > 0
+              ? `Found ${results.length} result${results.length !== 1 ? 's' : ''} for "${searchTerm}"`
+              : `No results found for "${searchTerm}"`}
+          </p>
+        )}
+
+        {results.length > 0 ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
+            {results.map((movie) => (
+              <MovieCard key={movie.id} movie={movie} />
+            ))}
+          </div>
+        ) : searchTerm ? (
+          <div className="flex flex-col items-center justify-center py-24 text-center">
+            <div className="text-6xl mb-4">🎬</div>
+            <h2 className="text-2xl font-semibold text-white mb-2">No results found</h2>
+            <p className="text-gray-400 max-w-md">
+              We couldn&apos;t find anything matching &quot;{searchTerm}&quot;. Try different keywords or browse our categories.
+            </p>
+          </div>
         ) : (
-          <>
-            <h2 className="text-xl font-semibold text-white mb-6">Trending Searches</h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-              {trending.map((item) => (
-                <MovieCard key={item.id} movie={item} />
-              ))}
-            </div>
-          </>
+          <div className="flex flex-col items-center justify-center py-24 text-center">
+            <div className="text-6xl mb-4">🔍</div>
+            <h2 className="text-2xl font-semibold text-white mb-2">Search StreamFlix</h2>
+            <p className="text-gray-400">Find your favorite movies, TV shows, and more.</p>
+          </div>
         )}
       </div>
     </div>
+  );
+}
+
+export default function SearchPage() {
+  return (
+    <>
+      <Header />
+      <Suspense fallback={
+        <div className="min-h-screen bg-netflix-black pt-24 flex items-center justify-center">
+          <div className="text-white text-xl">Loading...</div>
+        </div>
+      }>
+        <SearchContent />
+      </Suspense>
+      <Footer />
+    </>
   );
 }

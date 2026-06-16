@@ -2,17 +2,19 @@ export interface Movie {
   id: string;
   title: string;
   description: string;
-  year: string;
+  thumbnailUrl: string;
+  backdropUrl: string;
+  year: number;
   rating: string;
   duration: string;
   matchScore: number;
   genres: string[];
-  thumbnailUrl: string;
-  backdropUrl: string;
+  type: 'movie' | 'tv';
+  badge?: string;
+  isFeatured?: boolean;
+  trailerUrl?: string;
   cast?: string[];
   director?: string;
-  badge?: string;
-  type: 'movie' | 'tv';
   seasons?: number;
   episodes?: number;
 }
@@ -27,7 +29,7 @@ export interface User {
   id: string;
   name: string;
   email: string;
-  avatar?: string;
+  avatarUrl?: string;
   plan: 'basic' | 'standard' | 'premium';
   myList: string[];
 }
@@ -40,28 +42,18 @@ export interface Genre {
 
 export interface SearchResult {
   movies: Movie[];
-  query: string;
   total: number;
+  query: string;
 }
 
 export interface NavLink {
-  label: string;
   href: string;
+  label: string;
+  icon?: string;
 }
 
-export interface HeroContent {
-  movie: Movie;
-  autoPlay?: boolean;
-  muted?: boolean;
-}
-
-export type ContentType = 'movie' | 'tv' | 'all';
-
-export type SortOption = 'trending' | 'newest' | 'rating' | 'alphabetical';
-
-export interface FilterOptions {
-  genre?: string;
-  type?: ContentType;
-  sort?: SortOption;
-  year?: string;
+export interface HeroAction {
+  label: string;
+  variant: 'primary' | 'secondary';
+  onClick: () => void;
 }

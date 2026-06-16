@@ -3,9 +3,8 @@ import './globals.css';
 
 export const metadata: Metadata = {
   title: 'StreamFlix - Watch Movies & TV Shows Online',
-  description: 'Watch unlimited movies, TV shows, and more. Stream anywhere, anytime on StreamFlix.',
-  keywords: 'streaming, movies, TV shows, watch online, entertainment',
-  authors: [{ name: 'StreamFlix' }],
+  description: 'Watch unlimited movies, TV shows, and more. Stream anywhere, anytime. Cancel anytime.',
+  keywords: 'streaming, movies, tv shows, watch online, entertainment',
   openGraph: {
     title: 'StreamFlix - Watch Movies & TV Shows Online',
     description: 'Watch unlimited movies, TV shows, and more.',

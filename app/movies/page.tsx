@@ -1,41 +1,44 @@
 import Header from '@/components/Header';
-import MovieGrid from '@/components/MovieGrid';
 import Footer from '@/components/Footer';
-import { getAllMovies } from '@/lib/movieData';
+import MovieCard from '@/components/MovieCard';
+import { getAllMovies } from '@/lib/data';
+
+export const metadata = {
+  title: 'Movies - StreamFlix',
+  description: 'Browse all movies on StreamFlix',
+};
+
+const GENRES = ['All', 'Action', 'Comedy', 'Drama', 'Horror', 'Sci-Fi', 'Thriller', 'Romance', 'Animation'];
 
 export default function MoviesPage() {
   const movies = getAllMovies();
 
   return (
-    <main className="bg-netflix-black min-h-screen">
+    <>
       <Header />
-      <div className="pt-24 pb-20 px-4 md:px-12">
-        <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-white">Movies</h1>
-          <p className="text-netflix-lightgray mt-2 text-lg">
-            Discover the latest blockbusters, indie gems, and timeless classics
-          </p>
-        </div>
+      <main className="min-h-screen bg-netflix-black pt-24 px-4 md:px-8 lg:px-16 pb-16">
+        <div className="max-w-7xl mx-auto">
+          <h1 className="text-3xl font-bold text-white mb-6">Movies</h1>
 
-        {/* Genre Filter */}
-        <div className="flex flex-wrap gap-3 mb-8">
-          {['All', 'Action', 'Comedy', 'Drama', 'Horror', 'Sci-Fi', 'Thriller', 'Romance'].map((genre) => (
-            <button
-              key={genre}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                genre === 'All'
-                  ? 'bg-netflix-red text-white'
-                  : 'bg-netflix-dark text-netflix-lightgray hover:bg-gray-700 hover:text-white border border-gray-600'
-              }`}
-            >
-              {genre}
-            </button>
-          ))}
-        </div>
+          <div className="flex flex-wrap gap-2 mb-8">
+            {GENRES.map((genre) => (
+              <button
+                key={genre}
+                className="px-4 py-2 rounded-full border border-gray-600 text-sm text-gray-300 hover:border-white hover:text-white transition-colors"
+              >
+                {genre}
+              </button>
+            ))}
+          </div>
 
-        <MovieGrid movies={movies} />
-      </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
+            {movies.map((movie) => (
+              <MovieCard key={movie.id} movie={movie} />
+            ))}
+          </div>
+        </div>
+      </main>
       <Footer />
-    </main>
+    </>
   );
 }
