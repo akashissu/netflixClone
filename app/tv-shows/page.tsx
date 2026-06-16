@@ -1,48 +1,41 @@
+import Header from '@/components/Header';
 import MovieGrid from '@/components/MovieGrid';
-import { tvShows } from '@/lib/data';
-import { Tv } from 'lucide-react';
-
-export const metadata = {
-  title: 'TV Shows - StreamFlix',
-  description: 'Browse all TV shows available on StreamFlix',
-};
+import Footer from '@/components/Footer';
+import { getAllTVShows } from '@/lib/movieData';
 
 export default function TVShowsPage() {
-  const categories = ['All', 'Drama', 'Comedy', 'Crime', 'Sci-Fi', 'Reality', 'Animation', 'Documentary'];
+  const shows = getAllTVShows();
 
   return (
-    <div className="min-h-screen bg-netflix-black pt-24 pb-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Page Header */}
-        <div className="flex items-center gap-3 mb-8">
-          <Tv className="w-8 h-8 text-netflix-red" />
-          <h1 className="text-3xl font-bold text-white">TV Shows</h1>
+    <main className="bg-netflix-black min-h-screen">
+      <Header />
+      <div className="pt-24 pb-20 px-4 md:px-12">
+        <div className="mb-8">
+          <h1 className="text-3xl md:text-4xl font-bold text-white">TV Shows</h1>
+          <p className="text-netflix-lightgray mt-2 text-lg">
+            Binge-watch the most talked-about series from around the world
+          </p>
         </div>
 
-        {/* Category Filter */}
-        <div className="flex flex-wrap gap-3 mb-10">
-          {categories.map((cat) => (
+        {/* Category tabs */}
+        <div className="flex gap-6 mb-8 border-b border-gray-700">
+          {['All Shows', 'Currently Airing', 'Completed', 'New Releases'].map((tab, i) => (
             <button
-              key={cat}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
-                cat === 'All'
-                  ? 'bg-netflix-red text-white'
-                  : 'bg-zinc-800 text-gray-300 hover:bg-zinc-700 hover:text-white'
+              key={tab}
+              className={`pb-3 text-sm font-medium transition-colors ${
+                i === 0
+                  ? 'text-white border-b-2 border-netflix-red'
+                  : 'text-netflix-lightgray hover:text-white'
               }`}
             >
-              {cat}
+              {tab}
             </button>
           ))}
         </div>
 
-        {/* Stats */}
-        <div className="flex items-center gap-2 mb-6">
-          <span className="text-gray-400 text-sm">{tvShows.length} shows available</span>
-        </div>
-
-        {/* TV Shows Grid */}
-        <MovieGrid movies={tvShows} />
+        <MovieGrid movies={shows} />
       </div>
-    </div>
+      <Footer />
+    </main>
   );
 }
