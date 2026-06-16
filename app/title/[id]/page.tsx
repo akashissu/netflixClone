@@ -13,23 +13,23 @@ export async function generateStaticParams() {
 }
 
 export default function TitlePage({ params }: TitlePageProps) {
-  const movie: Movie =
-    ALL_MOVIES.find((m) => String(m.id) === params.id) ??
-    ({
-      id: Number(params.id),
-      title: 'Unknown Title',
-      description: 'No description available.',
-      genre: 'Unknown',
-      year: 2024,
-      rating: 'N/A',
-      score: 0,
-      duration: 'N/A',
-      thumbnail: `https://picsum.photos/seed/${params.id}/400/225`,
-      backdrop: `https://picsum.photos/seed/${params.id}-bg/1920/1080`,
-      isTrending: false,
-      isNew: false,
-      type: 'movie'
-    } as Movie);
+  const defaultMovie = {
+    id: Number(params.id),
+    title: 'Unknown Title',
+    description: 'No description available.',
+    genre: 'Unknown',
+    year: 2024,
+    rating: 'N/A',
+    score: 0,
+    duration: 'N/A',
+    thumbnail: `https://picsum.photos/seed/${params.id}/400/225`,
+    backdrop: `https://picsum.photos/seed/${params.id}-bg/1920/1080`,
+    isTrending: false,
+    isNew: false,
+    type: 'movie'
+  };
+
+  const movie: Movie = ALL_MOVIES.find((m) => String(m.id) === params.id) ?? (defaultMovie as unknown as Movie);
 
   const similarMovies = ALL_MOVIES.filter((item) => item.genre === movie.genre && item.id !== movie.id).slice(0, 10);
 
