@@ -1,116 +1,138 @@
 'use client';
 
-import Link from 'next/link';
-import Image from 'next/image';
 import { useState } from 'react';
-import type { Movie } from '@/types';
+import Image from 'next/image';
+import type { TMDBTitle } from '@/types';
+import { getImageUrl, getTitleText, getDisplayDate, truncateText } from '@/lib/utils';
+import DetailModal from '@/components/DetailModal';
 
 interface MovieCardProps {
-  movie: Movie;
+  title: TMDBTitle;
 }
 
-export function MovieCard({ movie }: MovieCardProps) {
-  const [hovered, setHovered] = useState(false);
+export default function MovieCard({ title }: MovieCardProps) {
+  const [showModal, setShowModal] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
   const [imgError, setImgError] = useState(false);
 
+  const posterUrl = getImageUrl(title.poster_path, 'w342');
+  const backdropUrl = getImageUrl(title.backdrop_path, 'w500');
+  const titleText = getTitleText(title);
+  const releaseYear = getDisplayDate(title);
+  const matchScore = Math.round(title.vote_average * 10);
+
+  const displayImage = isHovered ? (backdropUrl || posterUrl) : posterUrl;
+
   return (
-    <Link href={`/title/${movie.id}`}>
+    <>
       <div
-        className="relative group cursor-pointer rounded overflow-hidden movie-card-hover"
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
+        className="relative w-32 md:w-44 lg:w-52 cursor-pointer group/card"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        onClick={() => setShowModal(true)}
       >
-        {/* Thumbnail */}
-        <div className="relative aspect-video bg-gray-800">
-          <Image
-            src={imgError ? `https://picsum.photos/seed/${movie.id}/400/225` : movie.thumbnail}
-            alt={movie.title}
-            fill
-            className="object-cover"
-            onError={() => setImgError(true)}
-            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
-          />
-
-          {/* Badges */}
-          <div className="absolute top-2 left-2 flex gap-1">
-            {movie.isNew && (
-              <span className="bg-netflix-red text-white text-xs font-bold px-2 py-0.5 rounded">
-                NEW
-              </span>
-            )}
-            {movie.isTrending && (
-              <span className="bg-yellow-500 text-black text-xs font-bold px-2 py-0.5 rounded">
-                TRENDING
-              </span>
-            )}
-          </div>
-        </div>
-
-        {/* Hover overlay */}
-        {hovered && (
-          <div className="absolute inset-0 bg-netflix-dark-gray border border-gray-700 rounded shadow-2xl z-10 flex flex-col animate-fade-in">
-            <div className="relative aspect-video bg-gray-800">
-              <Image
-                src={imgError ? `https://picsum.photos/seed/${movie.id}/400/225` : movie.thumbnail}
-                alt={movie.title}
-                fill
-                className="object-cover rounded-t"
-                onError={() => setImgError(true)}
-                sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
-              />
-              <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
-                <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center">
-                  <svg className="w-6 h-6 text-black ml-1" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M8 5v14l11-7z" />
-                  </svg>
-                </div>
+        {/* Card image */}
+        <div
+          className={`relative overflow-hidden rounded transition-all duration-300 ${
+            isHovered ? 'scale-110 shadow-2xl z-10' : 'scale-100'
+          }`}
+          style={{ aspectRatio: isHovered ? '16/9' : '2/3' }}
+        >
+          {displayImage && !imgError ? (
+            <Image
+              src={displayImage}
+              alt={titleText}
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 128px, (max-width: 1024px) 176px, 208px"
+              onError={() => setImgError(true)}
+            />
+          ) : (
+            <div className="absolute inset-0 bg-netflix-dark-gray flex items-center justify-center">
+              <div className="text-center px-2">
+                <svg className="w-8 h-8 text-white/30 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z" />
+                </svg>
+                <p className="text-white/50 text-xs leading-tight">{titleText}</p>
               </div>
             </div>
-            <div className="p-3 flex-1">
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex gap-2">
-                  <button className="w-8 h-8 bg-white rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors">
-                    <svg className="w-4 h-4 text-black ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+          )}
+
+          {/* Hover overlay */}
+          {isHovered && (
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent">
+              <div className="absolute bottom-0 left-0 right-0 p-2">
+                {/* Action buttons */}
+                <div className="flex items-center gap-1 mb-1">
+                  <button
+                    className="w-7 h-7 rounded-full bg-white flex items-center justify-center hover:bg-white/80 transition-colors"
+                    aria-label="Play"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <svg className="w-3 h-3 text-black" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M8 5v14l11-7z" />
                     </svg>
                   </button>
-                  <button className="w-8 h-8 border-2 border-gray-400 rounded-full flex items-center justify-center hover:border-white transition-colors">
-                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <button
+                    className="w-7 h-7 rounded-full border-2 border-white/60 flex items-center justify-center hover:border-white transition-colors"
+                    aria-label="Add to list"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                     </svg>
                   </button>
+                  <button
+                    className="w-7 h-7 rounded-full border-2 border-white/60 flex items-center justify-center hover:border-white transition-colors"
+                    aria-label="Like"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
+                    </svg>
+                  </button>
+                  <button
+                    className="w-7 h-7 rounded-full border-2 border-white/60 flex items-center justify-center hover:border-white transition-colors ml-auto"
+                    aria-label="More info"
+                    onClick={(e) => { e.stopPropagation(); setShowModal(true); }}
+                  >
+                    <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
                 </div>
-                <button className="w-8 h-8 border-2 border-gray-400 rounded-full flex items-center justify-center hover:border-white transition-colors">
-                  <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-              </div>
-              <div className="flex items-center gap-2 text-xs mb-2">
-                <span className="text-green-400 font-bold">{movie.score}% Match</span>
-                <span className="border border-gray-500 px-1 text-gray-400">{movie.rating}</span>
-                <span className="text-gray-400">{movie.duration}</span>
-              </div>
-              <p className="text-gray-300 text-xs line-clamp-2">{movie.description}</p>
-              <div className="flex flex-wrap gap-1 mt-2">
-                {movie.genre.split(', ').slice(0, 2).map((g) => (
-                  <span key={g} className="text-gray-400 text-xs">
-                    {g}
-                  </span>
-                ))}
+
+                {/* Meta */}
+                <div className="flex items-center gap-1 flex-wrap">
+                  <span className="text-green-400 text-xs font-semibold">{matchScore}%</span>
+                  {releaseYear && <span className="text-white/60 text-xs">{releaseYear}</span>}
+                </div>
+
+                {/* Title */}
+                <p className="text-white text-xs font-medium mt-0.5 leading-tight line-clamp-1">
+                  {titleText}
+                </p>
+
+                {/* Overview snippet */}
+                {title.overview && (
+                  <p className="text-white/60 text-xs mt-0.5 line-clamp-2 leading-tight">
+                    {truncateText(title.overview, 80)}
+                  </p>
+                )}
               </div>
             </div>
-          </div>
-        )}
-
-        {/* Title below card (non-hover) */}
-        <div className="p-2">
-          <p className="text-white text-sm font-medium truncate">{movie.title}</p>
-          <p className="text-gray-400 text-xs">{movie.year}</p>
+          )}
         </div>
+
+        {/* Title below card (non-hovered) */}
+        {!isHovered && (
+          <p className="text-white/70 text-xs mt-1 truncate px-0.5">{titleText}</p>
+        )}
       </div>
-    </Link>
+
+      {showModal && (
+        <DetailModal title={title} onClose={() => setShowModal(false)} />
+      )}
+    </>
   );
 }
-
-export default MovieCard;
