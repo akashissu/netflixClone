@@ -1,78 +1,67 @@
-export interface Track {
-  id: string;
+export interface Title {
+  id: number;
   title: string;
-  artist: string;
-  artistId: string;
-  album: string;
-  albumId: string;
-  duration: number;
-  coverUrl: string;
-  audioUrl?: string;
-  explicit?: boolean;
-  popularity?: number;
-}
-
-export interface Playlist {
-  id: string;
-  name: string;
-  description: string;
-  coverUrl: string;
-  owner: string;
-  tracks: Track[];
-  followers?: number;
-  isPublic?: boolean;
-}
-
-export interface Artist {
-  id: string;
-  name: string;
-  bio: string;
-  imageUrl: string;
-  genres: string[];
-  followers: number;
-  monthlyListeners: number;
-  topTracks: Track[];
-  albums: Album[];
-  verified?: boolean;
-}
-
-export interface Album {
-  id: string;
-  title: string;
-  artist: string;
-  artistId: string;
-  coverUrl: string;
+  overview: string;
+  posterPath: string;
+  backdropPath?: string;
+  voteAverage: number;
   releaseYear: number;
-  tracks: Track[];
-  genre?: string;
+  mediaType: 'movie' | 'tv';
+  genres?: string[];
+  maturityRating?: string;
+  duration?: string;
+  seasons?: number;
+  isNetflixOriginal?: boolean;
+  cast?: string[];
 }
 
-export interface Category {
+export interface User {
   id: string;
   name: string;
-  imageUrl: string;
-  color: string;
+  email: string;
+  avatarUrl?: string;
+  myList: number[];
 }
 
-export interface PlayerState {
-  currentTrack: Track | null;
-  isPlaying: boolean;
-  volume: number;
-  progress: number;
-  duration: number;
-  shuffle: boolean;
-  repeat: 'off' | 'all' | 'one';
+export interface Genre {
+  id: number;
+  name: string;
 }
 
 export interface SearchResult {
-  tracks: Track[];
-  artists: Artist[];
-  albums: Album[];
-  playlists: Playlist[];
+  titles: Title[];
+  totalResults: number;
+  page: number;
+  totalPages: number;
 }
 
-export interface NavItem {
-  label: string;
-  href: string;
-  icon: string;
+export type MediaType = 'movie' | 'tv';
+
+export type MaturityRating = 'G' | 'PG' | 'PG-13' | 'R' | 'NC-17' | 'TV-Y' | 'TV-G' | 'TV-PG' | 'TV-14' | 'TV-MA';
+
+export interface ContentRowProps {
+  title: string;
+  items: Title[];
+}
+
+export interface ContentGridProps {
+  title: string;
+  items: Title[];
+}
+
+export interface PageBannerProps {
+  title: string;
+  description?: string;
+}
+
+export interface HeroBannerProps {
+  movie: Title;
+}
+
+export interface TitleCardProps {
+  title: Title;
+}
+
+export interface TitleDetailProps {
+  title: Title;
 }

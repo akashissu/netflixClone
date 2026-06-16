@@ -8,17 +8,16 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        spotify: {
-          green: '#1DB954',
-          black: '#191414',
-          darkgray: '#121212',
-          gray: '#282828',
-          lightgray: '#B3B3B3',
-          white: '#FFFFFF',
+        netflix: {
+          red: '#E50914',
+          black: '#141414',
+          dark: '#181818',
+          gray: '#808080',
+          lightgray: '#b3b3b3',
         },
       },
       fontFamily: {
-        sans: ['Circular', 'Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif'],
+        sans: ['Netflix Sans', 'Helvetica Neue', 'Segoe UI', 'Roboto', 'sans-serif'],
       },
     },
   },

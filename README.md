@@ -1,84 +1,44 @@
-# Spotify Clone — Music Streaming UI
+# Netflix Clone — pap-396-feature Branch Fix
 
-A full-featured Spotify-style music streaming application built with Next.js 14 (App Router), TypeScript, and Tailwind CSS.
+This repository contains a Netflix Clone built with **Next.js 14 (App Router)**, **TypeScript**, and **Tailwind CSS**.
 
-## 🎵 Features
+## Fix: Export/Import Mismatch (PAP-396)
 
-- **Home Page** — Hero section, featured playlists, popular artists, new releases, trending tracks
-- **Browse Page** — Charts, new releases, genre categories
-- **Search Page** — Real-time search with results for tracks, artists, albums, and playlists
-- **Playlist Detail** — Full tracklist with play controls, recommended tracks
-- **Artist Profile** — Bio, top tracks, discography, related artists
+### Problem
 
-## 🧩 Components
-
-- **Sidebar** — Desktop navigation with library playlists
-- **PlayerBar** — Fixed bottom player with controls, progress bar, volume
-- **MobileNav** — Bottom navigation for mobile devices
-- **PlaylistCard** — Playlist grid card with hover play button
-- **TrackRow** — Track list row with play/pause, duration, album link
-- **ArtistCard** — Artist grid card with monthly listeners
-- **AlbumCard** — Album grid card with release year
-- **SearchBar** — Debounced search input with clear button
-- **Header** — Navigation arrows and user actions
-- **Footer** — Links, social icons, legal info
-
-## 🛠 Tech Stack
-
-- **Next.js 14** (App Router)
-- **TypeScript** — strict mode
-- **Tailwind CSS** — all styling
-- **React 18** — hooks throughout
-
-## 🚀 Getting Started
-
-```bash
-npm install
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-## 📁 Project Structure
+The Vercel build for the `pap-396-feature` branch was failing with:
 
 ```
-├── app/
-│   ├── globals.css
-│   ├── layout.tsx
-│   ├── page.tsx              # Home
-│   ├── browse/page.tsx       # Browse
-│   ├── search/page.tsx       # Search
-│   ├── playlist/[id]/page.tsx
-│   └── artist/[id]/page.tsx
-├── components/
-│   ├── Sidebar.tsx
-│   ├── PlayerBar.tsx
-│   ├── MobileNav.tsx
-│   ├── PlaylistCard.tsx
-│   ├── TrackRow.tsx
-│   ├── ArtistCard.tsx
-│   ├── AlbumCard.tsx
-│   ├── SearchBar.tsx
-│   ├── Header.tsx
-│   └── Footer.tsx
-├── lib/
-│   └── utils.ts              # Helpers + sample data
-├── types/
-│   └── index.ts              # All TypeScript types
-└── README.md
+Attempted import error: 'Header' is not exported from '@/components/Header'
+Attempted import error: 'Footer' is not exported from '@/components/Footer'
 ```
 
-## 🎨 Design
+**Root cause:** `components/Header.tsx` and `components/Footer.tsx` used `export default function` while the affected pages imported them as named imports (`{ Header }`, `{ Footer }`).
 
-Faithfully recreates the Spotify dark theme:
-- Background: `#121212`
-- Cards: `#282828`
-- Accent: `#1DB954` (Spotify Green)
-- Text: `#FFFFFF` / `#B3B3B3`
+### Fix Applied (Option A — Named Exports Everywhere)
 
-## 📝 Notes
+All components now use **named exports** (`export function ComponentName`) for consistency:
 
-- All data is static/mock — no real Spotify API calls
-- Images sourced from `picsum.photos` (placeholder)
-- Player controls are UI-only (no actual audio playback)
-- Fully responsive: mobile, tablet, desktop
+| File | Change |
+|------|--------|
+| `components/Header.tsx` | `export default function Header` → `export function Header` |
+| `components/Footer.tsx` | `export default function Footer` → `export function Footer` |
+| `components/HeroBanner.tsx` | Uses `export function HeroBanner` ✓ |
+| `components/ContentRow.tsx` | Uses `export function ContentRow` ✓ |
+| `components/ContentGrid.tsx` | Uses `export function ContentGrid` ✓ |
+| `components/TitleCard.tsx` | Uses `export function TitleCard` ✓ |
+| `components/PageBanner.tsx` | Uses `export function PageBanner` ✓ |
+| `components/TitleDetail.tsx` | Uses `export function TitleDetail` ✓ |
+
+All pages now correctly use named imports:
+```tsx
+import { Header } from '@/components/Header';
+import { Footer } from '@/components/Footer';
+```
+
+### Affected Pages Fixed
+
+- `app/movies/page.tsx`
+- `app/my-list/page.tsx`
+- `app/title/[id]/page.tsx`
+- `app/tv-shows/page.tsx`
