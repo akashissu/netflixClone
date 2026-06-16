@@ -1,7 +1,7 @@
 import { Header } from '@/components/Header';
-import { Footer } from '@/components/Footer';
+import Footer from '@/components/Footer';
 import { HeroBanner } from '@/components/HeroBanner';
-import { MovieRow } from '@/components/MovieRow';
+import MovieRow from '@/components/MovieRow';
 import { FEATURED_MOVIE, MOVIE_ROWS } from '@/lib/data';
 
 export default function BrowsePage() {
