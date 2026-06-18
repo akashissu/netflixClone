@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { formatDuration } from '@/lib/utils';
+import { formatDuration, SAMPLE_TRACKS } from '@/lib/utils';
 import type { Track } from '@/types';
 
 interface TrackRowProps {

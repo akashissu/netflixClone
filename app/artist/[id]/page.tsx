@@ -6,7 +6,7 @@ import Link from 'next/link';
 import TrackRow from '@/components/TrackRow';
 import AlbumCard from '@/components/AlbumCard';
 import ArtistCard from '@/components/ArtistCard';
-import { SAMPLE_ARTISTS, SAMPLE_ALBUMS, formatNumber } from '@/lib/utils';
+import { SAMPLE_ARTISTS, SAMPLE_ALBUMS, formatNumber, formatDuration } from '@/lib/utils';
 
 export default function ArtistPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
