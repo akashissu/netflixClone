@@ -2,6 +2,8 @@ import { Movie } from '@/types';
 
 const MY_LIST_KEY = 'netflix_clone_my_list';
 
+type MovieId = Movie['id'];
+
 export function getMyList(): Movie[] {
   if (typeof window === 'undefined') return [];
   try {
@@ -25,7 +27,7 @@ export function addToMyList(item: Movie): void {
   }
 }
 
-export function removeFromMyList(id: number): void {
+export function removeFromMyList(id: MovieId): void {
   if (typeof window === 'undefined') return;
   try {
     const list = getMyList();
@@ -36,7 +38,7 @@ export function removeFromMyList(id: number): void {
   }
 }
 
-export function isInMyList(id: number): boolean {
+export function isInMyList(id: MovieId): boolean {
   if (typeof window === 'undefined') return false;
   try {
     const list = getMyList();

@@ -20,7 +20,7 @@ export interface User {
   name: string;
   email: string;
   avatarUrl?: string;
-  myList: number[];
+  myList: Array<string | number>;
 }
 
 export interface Genre {
@@ -37,7 +37,17 @@ export interface SearchResult {
 
 export type MediaType = 'movie' | 'tv';
 
-export type MaturityRating = 'G' | 'PG' | 'PG-13' | 'R' | 'NC-17' | 'TV-Y' | 'TV-G' | 'TV-PG' | 'TV-14' | 'TV-MA';
+export type MaturityRating =
+  | 'G'
+  | 'PG'
+  | 'PG-13'
+  | 'R'
+  | 'NC-17'
+  | 'TV-Y'
+  | 'TV-G'
+  | 'TV-PG'
+  | 'TV-14'
+  | 'TV-MA';
 
 export interface ContentRowProps {
   title: string;
@@ -64,4 +74,139 @@ export interface TitleCardProps {
 
 export interface TitleDetailProps {
   title: Title;
+}
+
+export interface Movie {
+  id: string | number;
+  title: string;
+  description: string;
+  year: string | number;
+  rating: string;
+  duration: string;
+  type: MediaType;
+  thumbnail?: string;
+  thumbnailUrl?: string;
+  backdrop?: string;
+  backdropUrl?: string;
+  genre?: string;
+  genres?: string[];
+  score?: number;
+  matchScore?: number;
+  isTrending?: boolean;
+  isNew?: boolean;
+  cast?: string[];
+  director?: string;
+  badge?: string;
+  name?: string;
+  overview?: string;
+  media_type?: string;
+  poster_path?: string | null;
+  backdrop_path?: string | null;
+  vote_average?: number;
+  vote_count?: number;
+  release_date?: string;
+  first_air_date?: string;
+  genre_ids?: number[];
+  original_language?: string;
+  runtime?: number;
+  number_of_seasons?: number;
+  similar?: TMDBTitle[];
+}
+
+export interface MovieRow {
+  id: string;
+  title: string;
+  movies: Movie[];
+}
+
+export interface MovieDetails extends Movie {
+  videos?: Video[];
+}
+
+export interface Video {
+  id: string;
+  key: string;
+  name: string;
+  site: string;
+  type: string;
+}
+
+export interface TMDBGenre {
+  id: number;
+  name: string;
+}
+
+export interface TMDBTitle {
+  id: number;
+  title?: string;
+  name?: string;
+  overview: string;
+  poster_path: string | null;
+  backdrop_path: string | null;
+  vote_average: number;
+  vote_count?: number;
+  release_date?: string;
+  first_air_date?: string;
+  media_type?: string;
+  genre_ids?: number[];
+  genres?: TMDBGenre[];
+  original_language?: string;
+  popularity?: number;
+  runtime?: number;
+  number_of_seasons?: number;
+  similar?: TMDBTitle[];
+}
+
+export interface TMDBResponse {
+  results: TMDBTitle[];
+}
+
+export interface Track {
+  id: string;
+  title: string;
+  artist: string;
+  artistId: string;
+  album: string;
+  albumId: string;
+  duration: number;
+  coverUrl: string;
+  explicit?: boolean;
+}
+
+export interface Album {
+  id: string;
+  title: string;
+  artist: string;
+  artistId: string;
+  releaseYear: number;
+  coverUrl: string;
+  tracks?: Track[];
+}
+
+export interface Artist {
+  id: string;
+  name: string;
+  imageUrl: string;
+  verified?: boolean;
+  monthlyListeners: number;
+  bio: string;
+  genres: string[];
+  topTracks: Track[];
+}
+
+export interface Playlist {
+  id: string;
+  name: string;
+  description: string;
+  owner: string;
+  coverUrl: string;
+  followers?: number;
+  tracks: Track[];
+}
+
+export interface Category {
+  id: string;
+  name: string;
+  color: string;
+  imageUrl: string;
 }

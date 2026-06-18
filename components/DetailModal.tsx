@@ -5,27 +5,63 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { VideoPlayer } from '@/components/VideoPlayer';
 import { getImageUrl, formatRuntime, formatDate } from '@/lib/utils';
-import type { TMDBTitle } from '@/types';
+import type { Movie, TMDBTitle } from '@/types';
+
+type DetailItem = TMDBTitle & {
+  displayTitle: string;
+  mediaType: string;
+};
 
 interface DetailModalProps {
-  title: TMDBTitle;
+  title?: TMDBTitle;
+  movie?: Movie;
   onClose?: () => void;
   isModal?: boolean;
 }
 
-export function DetailModal({ title, onClose, isModal = false }: DetailModalProps) {
+function normalizeItem(title?: TMDBTitle, movie?: Movie): DetailItem {
+  if (title) {
+    return {
+      ...title,
+      displayTitle: title.title || title.name || 'Unknown Title',
+      mediaType: title.media_type || 'movie',
+    };
+  }
+
+  return {
+    id: Number(movie?.id ?? 0),
+    title: movie?.title,
+    name: movie?.name,
+    overview: movie?.overview ?? movie?.description ?? '',
+    poster_path: movie?.poster_path ?? null,
+    backdrop_path: movie?.backdrop_path ?? null,
+    vote_average: movie?.vote_average ?? (movie?.score ? movie.score / 10 : 0),
+    vote_count: movie?.vote_count,
+    release_date: movie?.release_date,
+    first_air_date: movie?.first_air_date,
+    media_type: movie?.media_type ?? movie?.type ?? 'movie',
+    genre_ids: movie?.genre_ids,
+    original_language: movie?.original_language,
+    runtime: movie?.runtime,
+    number_of_seasons: movie?.number_of_seasons,
+    similar: movie?.similar,
+    displayTitle: movie?.title ?? 'Unknown Title',
+    mediaType: movie?.media_type ?? movie?.type ?? 'movie',
+  };
+}
+
+export function DetailModal({ title, movie, onClose, isModal = false }: DetailModalProps) {
   const [inMyList, setInMyList] = useState(false);
   const [showPlayer, setShowPlayer] = useState(false);
   const [mounted, setMounted] = useState(false);
 
-  const displayTitle = title.title || title.name || 'Unknown Title';
-  const backdropUrl = getImageUrl(title.backdrop_path, 'w1280');
-  const mediaType = title.media_type || 'movie';
-  const year = title.release_date
-    ? new Date(title.release_date).getFullYear()
-    : title.first_air_date
-    ? new Date(title.first_air_date).getFullYear()
-    : null;
+  const item = normalizeItem(title, movie);
+  const backdropUrl = getImageUrl(item.backdrop_path, 'w1280');
+  const year = item.release_date
+    ? new Date(item.release_date).getFullYear()
+    : item.first_air_date
+      ? new Date(item.first_air_date).getFullYear()
+      : null;
 
   useEffect(() => {
     setMounted(true);
@@ -33,23 +69,25 @@ export function DetailModal({ title, onClose, isModal = false }: DetailModalProp
     if (stored) {
       try {
         const list: TMDBTitle[] = JSON.parse(stored);
-        setInMyList(list.some((item) => item.id === title.id));
+        setInMyList(list.some((storedItem) => storedItem.id === item.id));
       } catch {
         setInMyList(false);
       }
     }
-  }, [title.id]);
+  }, [item.id]);
 
   useEffect(() => {
     if (isModal) {
       document.body.style.overflow = 'hidden';
-      return () => { document.body.style.overflow = ''; };
+      return () => {
+        document.body.style.overflow = '';
+      };
     }
   }, [isModal]);
 
   const handleKeyDown = useCallback(
-    (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && onClose) onClose();
+    (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && onClose) onClose();
     },
     [onClose]
   );
@@ -63,16 +101,23 @@ export function DetailModal({ title, onClose, isModal = false }: DetailModalProp
     if (!mounted) return;
     const stored = localStorage.getItem('netflix-my-list');
     let list: TMDBTitle[] = [];
+
     if (stored) {
-      try { list = JSON.parse(stored); } catch { list = []; }
+      try {
+        list = JSON.parse(stored);
+      } catch {
+        list = [];
+      }
     }
+
     if (inMyList) {
-      list = list.filter((item) => item.id !== title.id);
+      list = list.filter((storedItem) => storedItem.id !== item.id);
     } else {
-      list.push(title);
+      list.push(item);
     }
+
     localStorage.setItem('netflix-my-list', JSON.stringify(list));
-    setInMyList(!inMyList);
+    setInMyList((current) => !current);
   };
 
   const content = (
@@ -80,18 +125,17 @@ export function DetailModal({ title, onClose, isModal = false }: DetailModalProp
       className={`bg-netflix-dark-gray rounded-lg overflow-hidden ${
         isModal ? 'max-w-3xl w-full mx-4 max-h-[90vh] overflow-y-auto' : 'w-full'
       }`}
-      onClick={(e) => e.stopPropagation()}
+      onClick={(event) => event.stopPropagation()}
     >
-      {/* Backdrop / Video */}
       <div className="relative aspect-video w-full">
         {showPlayer ? (
-          <VideoPlayer title={displayTitle} />
+          <VideoPlayer title={item.displayTitle} />
         ) : (
           <>
             {backdropUrl ? (
               <Image
                 src={backdropUrl}
-                alt={displayTitle}
+                alt={item.displayTitle}
                 fill
                 className="object-cover"
                 sizes="(max-width: 768px) 100vw, 768px"
@@ -102,7 +146,6 @@ export function DetailModal({ title, onClose, isModal = false }: DetailModalProp
             )}
             <div className="absolute inset-0 bg-gradient-to-t from-netflix-dark-gray via-transparent to-transparent" />
 
-            {/* Play button overlay */}
             <button
               onClick={() => setShowPlayer(true)}
               className="absolute inset-0 flex items-center justify-center group"
@@ -117,7 +160,6 @@ export function DetailModal({ title, onClose, isModal = false }: DetailModalProp
           </>
         )}
 
-        {/* Close button */}
         {isModal && onClose && (
           <button
             onClick={onClose}
@@ -130,15 +172,12 @@ export function DetailModal({ title, onClose, isModal = false }: DetailModalProp
           </button>
         )}
 
-        {/* Title overlay */}
         <div className="absolute bottom-6 left-6 right-6">
-          <h2 className="text-2xl md:text-3xl font-bold text-white drop-shadow-lg">{displayTitle}</h2>
+          <h2 className="text-2xl md:text-3xl font-bold text-white drop-shadow-lg">{item.displayTitle}</h2>
         </div>
       </div>
 
-      {/* Content */}
       <div className="p-6">
-        {/* Action buttons */}
         <div className="flex items-center gap-3 mb-6">
           <button
             onClick={() => setShowPlayer(true)}
@@ -177,7 +216,7 @@ export function DetailModal({ title, onClose, isModal = false }: DetailModalProp
 
           {isModal && (
             <Link
-              href={`/title/${title.id}?type=${mediaType}`}
+              href={`/title/${item.id}?type=${item.mediaType}`}
               className="ml-auto w-10 h-10 rounded-full border-2 border-gray-400 hover:border-white flex items-center justify-center transition-colors"
               aria-label="View full details"
             >
@@ -188,86 +227,74 @@ export function DetailModal({ title, onClose, isModal = false }: DetailModalProp
           )}
         </div>
 
-        {/* Metadata row */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <div className="flex flex-wrap items-center gap-2 mb-3 text-sm">
-              {title.vote_average && (
-                <span className="text-green-400 font-semibold">
-                  {Math.round(title.vote_average * 10)}% Match
-                </span>
-              )}
-              {year && <span className="text-gray-300">{year}</span>}
-              {title.runtime && (
-                <span className="text-gray-300">{formatRuntime(title.runtime)}</span>
-              )}
-              {title.number_of_seasons && (
+              {item.vote_average ? (
+                <span className="text-green-400 font-semibold">{Math.round(item.vote_average * 10)}% Match</span>
+              ) : null}
+              {year ? <span className="text-gray-300">{year}</span> : null}
+              {item.runtime ? <span className="text-gray-300">{formatRuntime(item.runtime)}</span> : null}
+              {item.number_of_seasons ? (
                 <span className="text-gray-300">
-                  {title.number_of_seasons} Season{title.number_of_seasons !== 1 ? 's' : ''}
+                  {item.number_of_seasons} Season{item.number_of_seasons !== 1 ? 's' : ''}
                 </span>
-              )}
+              ) : null}
               <span className="maturity-badge">16+</span>
             </div>
 
-            {title.overview && (
-              <p className="text-gray-300 text-sm leading-relaxed">{title.overview}</p>
-            )}
+            {item.overview ? <p className="text-gray-300 text-sm leading-relaxed">{item.overview}</p> : null}
           </div>
 
           <div className="space-y-2 text-sm">
-            {title.genres && title.genres.length > 0 && (
+            {item.genres && item.genres.length > 0 ? (
               <div>
                 <span className="text-gray-500">Genres: </span>
-                <span className="text-gray-300">
-                  {title.genres.map((g) => g.name).join(', ')}
-                </span>
+                <span className="text-gray-300">{item.genres.map((genre) => genre.name).join(', ')}</span>
               </div>
-            )}
-            {title.vote_average && (
+            ) : null}
+            {item.vote_average ? (
               <div>
                 <span className="text-gray-500">Rating: </span>
-                <span className="text-gray-300">
-                  ⭐ {title.vote_average.toFixed(1)} / 10
-                </span>
+                <span className="text-gray-300">⭐ {item.vote_average.toFixed(1)} / 10</span>
               </div>
-            )}
-            {title.vote_count && (
+            ) : null}
+            {item.vote_count ? (
               <div>
                 <span className="text-gray-500">Votes: </span>
-                <span className="text-gray-300">{title.vote_count.toLocaleString()}</span>
+                <span className="text-gray-300">{item.vote_count.toLocaleString()}</span>
               </div>
-            )}
-            {title.original_language && (
+            ) : null}
+            {item.original_language ? (
               <div>
                 <span className="text-gray-500">Language: </span>
-                <span className="text-gray-300 uppercase">{title.original_language}</span>
+                <span className="text-gray-300 uppercase">{item.original_language}</span>
               </div>
-            )}
-            {title.release_date && (
+            ) : null}
+            {item.release_date ? (
               <div>
                 <span className="text-gray-500">Release Date: </span>
-                <span className="text-gray-300">{formatDate(title.release_date)}</span>
+                <span className="text-gray-300">{formatDate(item.release_date)}</span>
               </div>
-            )}
+            ) : null}
           </div>
         </div>
 
-        {/* Similar titles placeholder */}
-        {title.similar && title.similar.length > 0 && (
+        {item.similar && item.similar.length > 0 ? (
           <div className="mt-8">
             <h3 className="text-white font-semibold mb-4">More Like This</h3>
             <div className="grid grid-cols-3 gap-3">
-              {title.similar.slice(0, 6).map((item) => (
+              {item.similar.slice(0, 6).map((similarItem) => (
                 <Link
-                  key={item.id}
-                  href={`/title/${item.id}?type=${mediaType}`}
+                  key={similarItem.id}
+                  href={`/title/${similarItem.id}?type=${item.mediaType}`}
                   className="group"
                 >
                   <div className="relative aspect-video rounded overflow-hidden mb-1">
-                    {item.backdrop_path ? (
+                    {similarItem.backdrop_path ? (
                       <Image
-                        src={getImageUrl(item.backdrop_path, 'w300') || ''}
-                        alt={item.title || item.name || ''}
+                        src={getImageUrl(similarItem.backdrop_path, 'w300')}
+                        alt={similarItem.title || similarItem.name || ''}
                         fill
                         className="object-cover group-hover:scale-105 transition-transform duration-300"
                         sizes="200px"
@@ -277,13 +304,13 @@ export function DetailModal({ title, onClose, isModal = false }: DetailModalProp
                     )}
                   </div>
                   <p className="text-gray-300 text-xs truncate group-hover:text-white transition-colors">
-                    {item.title || item.name}
+                    {similarItem.title || similarItem.name}
                   </p>
                 </Link>
               ))}
             </div>
           </div>
-        )}
+        ) : null}
       </div>
     </div>
   );
