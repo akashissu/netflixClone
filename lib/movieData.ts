@@ -276,17 +276,17 @@ export function getMovieRows(): MovieRow[] {
     {
       id: 'action',
       title: 'Action & Adventure',
-      movies: movies.filter((m) => m.genres.includes('Action')),
+      movies: movies.filter((m) => m.genres?.includes('Action')),
     },
     {
       id: 'scifi',
       title: 'Sci-Fi & Fantasy',
-      movies: movies.filter((m) => m.genres.includes('Sci-Fi') || m.genres.includes('Fantasy')),
+      movies: movies.filter((m) => m.genres?.includes('Sci-Fi') || m.genres?.includes('Fantasy')),
     },
     {
       id: 'drama',
       title: 'Award-Winning Dramas',
-      movies: movies.filter((m) => m.genres.includes('Drama')),
+      movies: movies.filter((m) => m.genres?.includes('Drama')),
     },
   ];
 }

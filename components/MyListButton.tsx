@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { FiPlus, FiCheck } from 'react-icons/fi';
 import { Movie } from '@/types';
 import { isInMyList, addToMyList, removeFromMyList } from '@/lib/myList';
 
@@ -38,12 +37,16 @@ export default function MyListButton({ item, className = '' }: MyListButtonProps
     >
       {inList ? (
         <>
-          <FiCheck size={18} />
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          </svg>
           <span>In My List</span>
         </>
       ) : (
         <>
-          <FiPlus size={18} />
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+          </svg>
           <span>My List</span>
         </>
       )}

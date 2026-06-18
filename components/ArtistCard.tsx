@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { formatNumber } from '@/lib/utils';
+import { formatNumber, SAMPLE_ARTISTS } from '@/lib/utils';
 import type { Artist } from '@/types';
 
 interface ArtistCardProps {

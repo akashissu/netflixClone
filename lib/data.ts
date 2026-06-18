@@ -367,11 +367,11 @@ export const MOVIE_ROWS: MovieRowType[] = [
   {
     id: 'action',
     title: 'Action & Adventure',
-    movies: ALL_MOVIES.filter((m) => m.genre.includes('Action') || m.genre.includes('Thriller'))
+    movies: ALL_MOVIES.filter((m) => m.genre?.includes('Action') || m.genre?.includes('Thriller'))
   },
   {
     id: 'drama',
     title: 'Award-Winning Dramas',
-    movies: ALL_MOVIES.filter((m) => m.genre.includes('Drama'))
+    movies: ALL_MOVIES.filter((m) => m.genre?.includes('Drama'))
   }
 ];
